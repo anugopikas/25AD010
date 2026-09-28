@@ -1,300 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>VisitorPass - Visitors</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+    <link rel="stylesheet"
+          href="/css/style.css">
 
-        body {
-            background-color: #f4f6f9;
-        }
-
-        header {
-            background-color: #1f4e79;
-            color: white;
-            padding: 20px 40px;
-        }
-
-        nav {
-            background-color: white;
-            padding: 15px 40px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #333;
-            margin-right: 25px;
-            font-weight: bold;
-        }
-
-        .container {
-            padding: 30px 40px;
-        }
-
-        .box {
-            background-color: white;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        input {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 12px;
-            background-color: #1f4e79;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #163a5c;
-        }
-
-        #message {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #1f4e79;
-            color: white;
-        }
-
-        @media (max-width: 700px) {
-            .form {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-<header>
-    <h1>VisitorPass</h1>
-    <p>Visitor Pre-Approval</p>
+
+<header class="header">
+
+    <div class="logo">
+        VisitorPass
+    </div>
+
+    <div class="subtitle">
+        Visitor Pre-Approval
+    </div>
+
 </header>
 
-<nav>
-    <a href="index.html">Dashboard</a>
-    <a href="resident.html">Residents</a>
-    <a href="visitor.html">Visitors</a>
-    <a href="gate.html">Gate Verification</a>
-    <a href="entry.html">Entry / Exit</a>
-    <a href="guard.html">Security Guards</a>
+
+<nav class="navbar">
+
+    <a href="/index.html">Dashboard</a>
+
+    <a href="/resident.html">Residents</a>
+
+    <a href="/visitor.html">Visitors</a>
+
+    <a href="/gate.html">Gate Verification</a>
+
+    <a href="/entry.html">Entry / Exit</a>
+
+    <a href="/guard.html">Security Guards</a>
+
 </nav>
 
-<div class="container">
 
-    <div class="box">
+<main class="container">
 
-        <h2>Pre-Approve Visitor</h2>
 
-        <div class="form">
+    <div class="card">
 
-            <input type="text"
-                   id="name"
-                   placeholder="Visitor Name">
+        <h2>
+            Pre-Approve Visitor
+        </h2>
 
-            <input type="text"
-                   id="phone"
-                   placeholder="Phone Number">
 
-            <input type="date"
-                   id="visitDate">
+        <form id="visitorForm">
 
-            <input type="time"
-                   id="fromTime">
+            <div class="form-grid">
 
-            <input type="time"
-                   id="toTime">
 
-            <input type="number"
-                   id="flatId"
-                   placeholder="Flat ID">
+                <input
+                        type="text"
+                        id="visitorName"
+                        placeholder="Visitor Name"
+                        required>
 
-            <button onclick="createVisitor()">
+
+                <input
+                        type="text"
+                        id="visitorPhone"
+                        placeholder="Phone Number"
+                        required>
+
+
+                <input
+                        type="date"
+                        id="visitDate"
+                        required>
+
+
+                <input
+                        type="time"
+                        id="fromTime"
+                        required>
+
+
+                <input
+                        type="time"
+                        id="toTime"
+                        required>
+
+
+                <input
+                        type="number"
+                        id="flatId"
+                        placeholder="Flat ID"
+                        required>
+
+
+            </div>
+
+
+            <br>
+
+
+            <button
+                    type="submit"
+                    class="full-button">
+
                 Approve Visitor
+
             </button>
+
+        </form>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>
+            Approved Visitors
+        </h2>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Phone</th>
+
+                    <th>Date</th>
+
+                    <th>From</th>
+
+                    <th>To</th>
+
+                    <th>Flat ID</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="visitorTableBody">
+
+                </tbody>
+
+            </table>
 
         </div>
 
-        <p id="message"></p>
-
     </div>
 
 
-    <div class="box">
-
-        <h2>Approved Visitors</h2>
-
-        <table>
-
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Date</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Flat ID</th>
-            </tr>
-            </thead>
-
-            <tbody id="visitorTable">
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
+</main>
 
 
-<script>
-
-    function createVisitor() {
-
-        const visitor = {
-
-            Name: document.getElementById("name").value,
-
-            phone: document.getElementById("phone").value,
-
-            VisitDate: document.getElementById("visitDate").value,
-
-            FromTime: document.getElementById("fromTime").value,
-
-            ToTime: document.getElementById("toTime").value,
-
-            FlatId: document.getElementById("flatId").value
-        };
-
-
-        fetch("/api/visitor/create", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(visitor)
-
-        })
-
-            .then(response => response.json())
-
-            .then(data => {
-
-                document.getElementById("message").innerText =
-                    "Visitor approved successfully";
-
-                document.getElementById("name").value = "";
-                document.getElementById("phone").value = "";
-                document.getElementById("visitDate").value = "";
-                document.getElementById("fromTime").value = "";
-                document.getElementById("toTime").value = "";
-                document.getElementById("flatId").value = "";
-
-                loadVisitors();
-
-            })
-
-            .catch(error => {
-
-                document.getElementById("message").innerText =
-                    "Error approving visitor";
-
-                console.error(error);
-
-            });
-    }
-
-
-    function loadVisitors() {
-
-        fetch("/api/visitor/getall")
-
-            .then(response => response.json())
-
-            .then(data => {
-
-                const table =
-                    document.getElementById("visitorTable");
-
-                table.innerHTML = "";
-
-                data.forEach(visitor => {
-
-                    const row = `
-                    <tr>
-                        <td>${visitor.id}</td>
-                        <td>${visitor.name}</td>
-                        <td>${visitor.phone}</td>
-                        <td>${visitor.visitDate}</td>
-                        <td>${visitor.fromTime}</td>
-                        <td>${visitor.toTime}</td>
-                        <td>${visitor.flatId}</td>
-                    </tr>
-                `;
-
-                    table.innerHTML += row;
-
-                });
-
-            })
-
-            .catch(error => {
-                console.error("Error loading visitors:", error);
-            });
-    }
-
-
-    loadVisitors();
-
-</script>
+<script src="/js/script.js"></script>
 
 </body>
+
 </html>

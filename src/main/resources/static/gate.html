@@ -1,190 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>VisitorPass - Gate Verification</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+    <link rel="stylesheet"
+          href="/css/style.css">
 
-        body {
-            background-color: #f4f6f9;
-        }
-
-        header {
-            background-color: #1f4e79;
-            color: white;
-            padding: 20px 40px;
-        }
-
-        nav {
-            background-color: white;
-            padding: 15px 40px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #333;
-            margin-right: 25px;
-            font-weight: bold;
-        }
-
-        .container {
-            padding: 40px;
-        }
-
-        .box {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 35px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            width: 100%;
-            padding: 13px;
-            background-color: #1f4e79;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #163a5c;
-        }
-
-        #result {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-align: center;
-            display: none;
-        }
-    </style>
 </head>
+
 
 <body>
 
-<header>
-    <h1>VisitorPass</h1>
-    <p>Gate Verification</p>
-</header>
+<header class="header">
 
-<nav>
-    <a href="index.html">Dashboard</a>
-    <a href="resident.html">Residents</a>
-    <a href="visitor.html">Visitors</a>
-    <a href="gate.html">Gate Verification</a>
-    <a href="entry.html">Entry / Exit</a>
-    <a href="guard.html">Security Guards</a>
-</nav>
-
-<div class="container">
-
-    <div class="box">
-
-        <h2>Verify Visitor at Gate</h2>
-
-        <label>Visitor Phone Number</label>
-
-        <input type="text"
-               id="phone"
-               placeholder="Enter visitor phone number">
-
-        <button onclick="verifyVisitor()">
-            Verify Visitor
-        </button>
-
-        <div id="result"></div>
-
+    <div class="header-title">
+        VisitorPass
     </div>
 
-</div>
+    <div class="header-subtitle">
+        Gate Visitor Verification
+    </div>
+
+</header>
+
+
+<nav class="navbar">
+
+    <a href="/index.html">
+        Dashboard
+    </a>
+
+    <a href="/resident.html">
+        Residents
+    </a>
+
+    <a href="/visitor.html">
+        Visitors
+    </a>
+
+    <a href="/gate.html">
+        Gate Verification
+    </a>
+
+    <a href="/entry.html">
+        Entry / Exit
+    </a>
+
+    <a href="/guard.html">
+        Security Guards
+    </a>
+
+</nav>
+
+
+<main class="container">
+
+
+    <!-- GATE VERIFICATION -->
+
+    <section class="card">
+
+        <h2>
+            Gate Verification
+        </h2>
+
+        <p>
+            Enter visitor phone number
+            to verify pre-approval.
+        </p>
+
+
+        <form id="gateForm">
+
+            <div class="form-row">
+
+                <input
+                        type="text"
+                        id="gatePhone"
+                        placeholder="Enter visitor phone number"
+                        required
+                >
+
+
+                <button type="submit">
+                    Verify Visitor
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- RESULT -->
+
+    <section
+            id="resultCard"
+            class="card"
+            style="display:none;"
+    >
+
+        <h2>
+            Verification Result
+        </h2>
+
+        <div id="resultMessage"></div>
+
+    </section>
+
+
+    <!-- PROCESS -->
+
+    <section class="card">
+
+        <h2>
+            Verification Process
+        </h2>
+
+        <ol>
+
+            <li>
+                Visitor enters phone number.
+            </li>
+
+            <li>
+                System checks approved visitor.
+            </li>
+
+            <li>
+                Date and time are checked.
+            </li>
+
+            <li>
+                If valid, entry is recorded.
+            </li>
+
+            <li>
+                Visitor can later record exit.
+            </li>
+
+        </ol>
+
+    </section>
+
+
+</main>
 
 
 <script>
 
-    function verifyVisitor() {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-        const phone =
-            document.getElementById("phone").value;
 
-        if (phone === "") {
+            const form =
+                document.getElementById(
+                    "gateForm"
+                );
 
-            showResult("Please enter phone number");
 
-            return;
+            const phoneInput =
+                document.getElementById(
+                    "gatePhone"
+                );
+
+
+            const resultCard =
+                document.getElementById(
+                    "resultCard"
+                );
+
+
+            const resultMessage =
+                document.getElementById(
+                    "resultMessage"
+                );
+
+
+            form.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    const phone =
+                        phoneInput.value.trim();
+
+
+                    if (phone === "") {
+
+                        alert(
+                            "Please enter visitor phone number"
+                        );
+
+                        return;
+                    }
+
+
+                    console.log(
+                        "Verifying phone:",
+                        phone
+                    );
+
+
+                    resultCard.style.display =
+                        "block";
+
+
+                    resultMessage.innerHTML =
+                        "<p>Checking visitor...</p>";
+
+
+                    try {
+
+
+                        /*
+                         * IMPORTANT
+                         *
+                         * Backend expects:
+                         *
+                         * @RequestParam String phone
+                         *
+                         * Therefore phone must be
+                         * sent as query parameter.
+                         */
+
+                        const url =
+                            "/api/gate/verify?phone=" +
+                            encodeURIComponent(phone);
+
+
+                        console.log(
+                            "Request URL:",
+                            url
+                        );
+
+
+                        const response =
+                            await fetch(
+                                url,
+                                {
+                                    method: "POST"
+                                }
+                            );
+
+
+                        const message =
+                            await response.text();
+
+
+                        console.log(
+                            "Response:",
+                            response.status,
+                            message
+                        );
+
+
+                        if (!response.ok) {
+
+                            resultMessage.innerHTML = `
+
+                            <div class="error-box">
+
+                                <h3>
+                                    Verification Failed
+                                </h3>
+
+                                <p>
+                                    ${message}
+                                </p>
+
+                            </div>
+
+                        `;
+
+                            alert(message);
+
+                            return;
+                        }
+
+
+                        /*
+                         * SUCCESS
+                         */
+
+                        resultMessage.innerHTML = `
+
+                        <div class="success-box">
+
+                            <h3>
+                                Visitor Verified
+                            </h3>
+
+                            <p>
+                                ${message}
+                            </p>
+
+                            <p>
+                                Phone:
+                                <strong>
+                                    ${phone}
+                                </strong>
+                            </p>
+
+                        </div>
+
+                    `;
+
+
+                        alert(message);
+
+
+                        /*
+                         * Clear input
+                         */
+
+                        phoneInput.value = "";
+
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Gate verification error:",
+                            error
+                        );
+
+
+                        resultMessage.innerHTML = `
+
+                        <div class="error-box">
+
+                            <h3>
+                                Server Error
+                            </h3>
+
+                            <p>
+                                Unable to connect
+                                to backend server.
+                            </p>
+
+                        </div>
+
+                    `;
+
+
+                        alert(
+                            "Unable to connect to server"
+                        );
+
+                    }
+
+                }
+
+            );
+
         }
 
-
-        fetch("/api/gate/verify?phone=" + phone, {
-
-            method: "POST"
-
-        })
-
-            .then(response => response.text())
-
-            .then(data => {
-
-                showResult(data);
-
-            })
-
-            .catch(error => {
-
-                showResult("Error connecting to server");
-
-                console.error(error);
-
-            });
-    }
-
-
-    function showResult(message) {
-
-        const result =
-            document.getElementById("result");
-
-        result.style.display = "block";
-
-        result.innerText = message;
-
-    }
+    );
 
 </script>
 
+
+<style>
+
+    .form-row {
+
+        display: grid;
+
+        grid-template-columns:
+        1fr 1fr;
+
+        gap: 12px;
+
+    }
+
+
+    .form-row input {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+    }
+
+
+    .form-row button {
+
+        width: 100%;
+
+    }
+
+
+    .success-box {
+
+        padding: 18px;
+
+        background: #e8f7ee;
+
+        border-left: 5px solid #198754;
+
+        border-radius: 6px;
+
+        color: #155724;
+
+    }
+
+
+    .success-box h3 {
+
+        margin-top: 0;
+
+    }
+
+
+    .error-box {
+
+        padding: 18px;
+
+        background: #fdeaea;
+
+        border-left: 5px solid #dc3545;
+
+        border-radius: 6px;
+
+        color: #842029;
+
+    }
+
+
+    .error-box h3 {
+
+        margin-top: 0;
+
+    }
+
+
+    @media (max-width: 700px) {
+
+        .form-row {
+
+            grid-template-columns: 1fr;
+
+        }
+
+    }
+
+</style>
+
+
 </body>
+
 </html>

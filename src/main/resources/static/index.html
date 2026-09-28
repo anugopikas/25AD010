@@ -10,106 +10,171 @@
 
     <title>VisitorPass - Dashboard</title>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet"
+          href="/css/style.css">
 
 </head>
 
 <body>
 
-<header>
 
-    <h1>VisitorPass</h1>
+<header class="header">
 
-    <p>Gated Community Visitor Management System</p>
+    <div class="logo">
+        VisitorPass
+    </div>
+
+    <div class="subtitle">
+        Visitor Entry / Exit Management
+    </div>
 
 </header>
 
 
-<nav>
+<nav class="navbar">
 
-    <a href="/index.html">Dashboard</a>
+    <a href="/index.html">
+        Dashboard
+    </a>
 
-    <a href="/resident.html">Residents</a>
+    <a href="/resident.html">
+        Residents
+    </a>
 
-    <a href="/visitor.html">Visitors</a>
+    <a href="/visitor.html">
+        Visitors
+    </a>
 
-    <a href="/gate.html">Gate Verification</a>
+    <a href="/gate.html">
+        Gate Verification
+    </a>
 
-    <a href="/entry.html">Entry / Exit</a>
+    <a href="/entry.html">
+        Entry / Exit
+    </a>
 
-    <a href="/guard.html">Security Guards</a>
+    <a href="/guard.html">
+        Security Guards
+    </a>
 
 </nav>
 
 
-<div class="container">
+<main class="container">
 
-    <h2>Dashboard</h2>
+    <div class="card">
+
+        <h2>
+            Dashboard
+        </h2>
+
+        <p>
+            VisitorPass Security Management System
+        </p>
+
+    </div>
 
 
-    <div class="card-container">
+    <div class="dashboard">
 
-        <div class="card">
-            <h3>Total Residents</h3>
-            <p id="residentCount">0</p>
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Total Residents
+            </div>
+
+            <div
+                    id="residentCount"
+                    class="stat-number">
+                0
+            </div>
+
         </div>
 
 
-        <div class="card">
-            <h3>Total Visitors</h3>
-            <p id="visitorCount">0</p>
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Total Visitors
+            </div>
+
+            <div
+                    id="visitorCount"
+                    class="stat-number">
+                0
+            </div>
+
         </div>
 
 
-        <div class="card">
-            <h3>Entry Records</h3>
-            <p id="entryCount">0</p>
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Entry Records
+            </div>
+
+            <div
+                    id="entryCount"
+                    class="stat-number">
+                0
+            </div>
+
         </div>
 
 
-        <div class="card">
-            <h3>Security Guards</h3>
-            <p id="guardCount">0</p>
-        </div>
+        <div class="stat-card">
 
+            <div class="stat-title">
+                Security Guards
+            </div>
 
-        <div class="card">
-            <h3>Visitors Inside</h3>
-            <p id="inCount">0</p>
-        </div>
+            <div
+                    id="guardCount"
+                    class="stat-number">
+                0
+            </div>
 
-
-        <div class="card">
-            <h3>Visitors Exited</h3>
-            <p id="outCount">0</p>
         </div>
 
     </div>
 
 
-    <div class="quick-actions">
+    <div class="dashboard"
+         style="margin-top:20px;">
 
-        <h2>Quick Actions</h2>
+        <div class="stat-card">
 
-        <a href="/resident.html">
-            <button>Add Resident</button>
-        </a>
+            <div class="stat-title">
+                Currently Inside
+            </div>
 
-        <a href="/visitor.html">
-            <button>Add Visitor</button>
-        </a>
+            <div
+                    id="inCount"
+                    class="stat-number">
+                0
+            </div>
 
-        <a href="/gate.html">
-            <button>Gate Verification</button>
-        </a>
+        </div>
 
-        <a href="/entry.html">
-            <button>Record Exit</button>
-        </a>
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Visitors Exited
+            </div>
+
+            <div
+                    id="outCount"
+                    class="stat-number">
+                0
+            </div>
+
+        </div>
 
     </div>
 
-</div>
+</main>
 
 
 <script src="/js/script.js"></script>
