@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisitorPass - Gate Verification</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        header {
+            background-color: #1f4e79;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        nav {
+            background-color: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-right: 25px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .box {
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background-color: #1f4e79;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #163a5c;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>VisitorPass</h1>
+    <p>Gate Verification</p>
+</header>
+
+<nav>
+    <a href="index.html">Dashboard</a>
+    <a href="resident.html">Residents</a>
+    <a href="visitor.html">Visitors</a>
+    <a href="gate.html">Gate Verification</a>
+    <a href="entry.html">Entry / Exit</a>
+    <a href="guard.html">Security Guards</a>
+</nav>
+
+<div class="container">
+
+    <div class="box">
+
+        <h2>Verify Visitor at Gate</h2>
+
+        <label>Visitor Phone Number</label>
+
+        <input type="text"
+               id="phone"
+               placeholder="Enter visitor phone number">
+
+        <button onclick="verifyVisitor()">
+            Verify Visitor
+        </button>
+
+        <div id="result"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function verifyVisitor() {
+
+        const phone =
+            document.getElementById("phone").value;
+
+        if (phone === "") {
+
+            showResult("Please enter phone number");
+
+            return;
+        }
+
+
+        fetch("/api/gate/verify?phone=" + phone, {
+
+            method: "POST"
+
+        })
+
+            .then(response => response.text())
+
+            .then(data => {
+
+                showResult(data);
+
+            })
+
+            .catch(error => {
+
+                showResult("Error connecting to server");
+
+                console.error(error);
+
+            });
+    }
+
+
+    function showResult(message) {
+
+        const result =
+            document.getElementById("result");
+
+        result.style.display = "block";
+
+        result.innerText = message;
+
+    }
+
+</script>
+
+</body>
+</html>

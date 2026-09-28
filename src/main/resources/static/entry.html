@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisitorPass - Entry / Exit</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        header {
+            background-color: #1f4e79;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        nav {
+            background-color: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-right: 25px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px 40px;
+        }
+
+        .box {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form {
+            display: flex;
+            gap: 15px;
+            max-width: 600px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #1f4e79;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #163a5c;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f4e79;
+            color: white;
+        }
+
+        .in {
+            color: green;
+            font-weight: bold;
+        }
+
+        .out {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>VisitorPass</h1>
+    <p>Visitor Entry / Exit Management</p>
+</header>
+
+<nav>
+    <a href="index.html">Dashboard</a>
+    <a href="resident.html">Residents</a>
+    <a href="visitor.html">Visitors</a>
+    <a href="gate.html">Gate Verification</a>
+    <a href="entry.html">Entry / Exit</a>
+    <a href="guard.html">Security Guards</a>
+</nav>
+
+<div class="container">
+
+    <div class="box">
+
+        <h2>Record Visitor Exit</h2>
+
+        <div class="form">
+
+            <input
+                    type="text"
+                    id="phone"
+                    placeholder="Enter visitor phone number">
+
+            <button onclick="recordExit()">
+                Record Exit
+            </button>
+
+        </div>
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>Entry / Exit History</h2>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Phone</th>
+                <th>Entry Time</th>
+                <th>Exit Time</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody id="entryTable">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function recordExit() {
+
+        const phone =
+            document.getElementById("phone").value;
+
+        if (phone === "") {
+
+            document.getElementById("message").innerText =
+                "Please enter phone number";
+
+            return;
+        }
+
+
+        fetch("/api/entry/exit?phone=" + phone, {
+
+            method: "POST"
+
+        })
+
+            .then(response => response.text())
+
+            .then(data => {
+
+                document.getElementById("message").innerText =
+                    data;
+
+                loadEntries();
+
+            })
+
+            .catch(error => {
+
+                document.getElementById("message").innerText =
+                    "Error connecting to server";
+
+                console.error(error);
+
+            });
+    }
+
+
+    function loadEntries() {
+
+        fetch("/api/entry/getall")
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                const table =
+                    document.getElementById("entryTable");
+
+                table.innerHTML = "";
+
+                data.forEach(entry => {
+
+                    const statusClass =
+                        entry.status === "IN"
+                            ? "in"
+                            : "out";
+
+                    const row = `
+                    <tr>
+                        <td>${entry.id}</td>
+                        <td>${entry.phone}</td>
+                        <td>${entry.entryTime}</td>
+                        <td>${entry.exitTime || "-"}</td>
+                        <td class="${statusClass}">
+                            ${entry.status}
+                        </td>
+                    </tr>
+                `;
+
+                    table.innerHTML += row;
+
+                });
+
+            })
+
+            .catch(error => {
+                console.error("Error loading entries:", error);
+            });
+    }
+
+
+    loadEntries();
+
+</script>
+
+</body>
+</html>

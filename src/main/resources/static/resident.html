@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisitorPass - Residents</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        header {
+            background-color: #1f4e79;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        nav {
+            background-color: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-right: 25px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px 40px;
+        }
+
+        .form-box,
+        .table-box {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #1f4e79;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #163a5c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f4e79;
+            color: white;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .form {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>VisitorPass</h1>
+    <p>Resident Management</p>
+</header>
+
+<nav>
+    <a href="index.html">Dashboard</a>
+    <a href="resident.html">Residents</a>
+    <a href="visitor.html">Visitors</a>
+    <a href="gate.html">Gate Verification</a>
+    <a href="entry.html">Entry / Exit</a>
+    <a href="guard.html">Security Guards</a>
+</nav>
+
+<div class="container">
+
+    <div class="form-box">
+
+        <h2>Add Resident</h2>
+
+        <div class="form">
+
+            <input type="text"
+                   id="name"
+                   placeholder="Resident Name">
+
+            <input type="text"
+                   id="phone"
+                   placeholder="Phone Number">
+
+            <input type="email"
+                   id="email"
+                   placeholder="Email">
+
+            <input type="text"
+                   id="address"
+                   placeholder="Address">
+
+            <input type="number"
+                   id="flatId"
+                   placeholder="Flat ID">
+
+            <button onclick="createResident()">
+                Add Resident
+            </button>
+
+        </div>
+
+        <p id="message"></p>
+
+    </div>
+
+    <div class="table-box">
+
+        <h2>Residents</h2>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Flat ID</th>
+            </tr>
+            </thead>
+
+            <tbody id="residentTable">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+    function createResident() {
+
+        const resident = {
+            Name: document.getElementById("name").value,
+            Phone: document.getElementById("phone").value,
+            Email: document.getElementById("email").value,
+            Address: document.getElementById("address").value,
+            FlatId: document.getElementById("flatId").value
+        };
+
+        fetch("/api/resident/create", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(resident)
+
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById("message").innerText =
+                    "Resident added successfully";
+
+                document.getElementById("name").value = "";
+                document.getElementById("phone").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("address").value = "";
+                document.getElementById("flatId").value = "";
+
+                loadResidents();
+
+            })
+            .catch(error => {
+
+                document.getElementById("message").innerText =
+                    "Error adding resident";
+
+                console.error(error);
+
+            });
+    }
+
+
+    function loadResidents() {
+
+        fetch("/api/resident/getall")
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                const table =
+                    document.getElementById("residentTable");
+
+                table.innerHTML = "";
+
+                data.forEach(resident => {
+
+                    const row = `
+                    <tr>
+                        <td>${resident.id}</td>
+                        <td>${resident.name}</td>
+                        <td>${resident.phone}</td>
+                        <td>${resident.email}</td>
+                        <td>${resident.address}</td>
+                        <td>${resident.flatId}</td>
+                    </tr>
+                `;
+
+                    table.innerHTML += row;
+
+                });
+
+            })
+
+            .catch(error => {
+                console.error("Error loading residents:", error);
+            });
+    }
+
+
+    loadResidents();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+body {
+    background-color: #f4f7fb;
+    color: #222;
+}
+
+
+/* ================= HEADER ================= */
+
+header {
+    background-color: #1e3a5f;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+header p {
+    font-size: 16px;
+}
+
+
+/* ================= NAVIGATION ================= */
+
+nav {
+    background-color: white;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+nav a {
+    text-decoration: none;
+    color: #1e3a5f;
+    font-weight: bold;
+    margin: 0 12px;
+}
+
+nav a:hover {
+    color: #1976d2;
+}
+
+
+/* ================= CONTAINER ================= */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 35px auto;
+}
+
+.container > h2 {
+    color: #1e3a5f;
+    margin-bottom: 25px;
+}
+
+
+/* ================= CARDS ================= */
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+
+.card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+}
+
+
+.card h3 {
+    color: #1e3a5f;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+
+.card p {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+
+/* ================= QUICK ACTIONS ================= */
+
+.quick-actions {
+    background-color: white;
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 12px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+}
+
+.quick-actions h2 {
+    color: #1e3a5f;
+    margin-bottom: 20px;
+}
+
+
+/* ================= BUTTON ================= */
+
+button {
+    background-color: #1e3a5f;
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 12px 20px;
+    margin: 5px;
+
+    cursor: pointer;
+    font-weight: bold;
+}
+
+
+button:hover {
+    background-color: #1976d2;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 800px) {
+
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+
+    nav a {
+        display: block;
+        margin: 10px;
+    }
+
+}
