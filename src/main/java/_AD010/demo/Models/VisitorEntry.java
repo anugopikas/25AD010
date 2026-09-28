@@ -7,16 +7,14 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Visitor {
+public class VisitorEntry {
 
     @Id
     @GeneratedValue
     Long Id;
 
-    String Name;
     String phone;
-    String VisitDate;
-    String FromTime;
-    String ToTime;
-    Long FlatId;
+    String entryTime;
+    String exitTime;
+    String status;
 }

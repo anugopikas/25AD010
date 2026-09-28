@@ -7,16 +7,15 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Visitor {
+public class SecurityGuard {
 
     @Id
     @GeneratedValue
     Long Id;
 
     String Name;
-    String phone;
-    String VisitDate;
-    String FromTime;
-    String ToTime;
-    Long FlatId;
+    String Phone;
+    String Email;
+    String Address;
+    String Shift;
 }
