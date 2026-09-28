@@ -1,464 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>VisitorPass - Gate Verification</title>
-
-    <link rel="stylesheet"
-          href="/css/style.css">
-
-</head>
-
-
-<body>
-
-<header class="header">
-
-    <div class="header-title">
-        VisitorPass
-    </div>
-
-    <div class="header-subtitle">
-        Gate Visitor Verification
-    </div>
-
-</header>
-
-
-<nav class="navbar">
-
-    <a href="/index.html">
-        Dashboard
-    </a>
-
-    <a href="/resident.html">
-        Residents
-    </a>
-
-    <a href="/visitor.html">
-        Visitors
-    </a>
-
-    <a href="/gate.html">
-        Gate Verification
-    </a>
-
-    <a href="/entry.html">
-        Entry / Exit
-    </a>
-
-    <a href="/guard.html">
-        Security Guards
-    </a>
-
-</nav>
-
-
-<main class="container">
-
-
-    <!-- GATE VERIFICATION -->
-
-    <section class="card">
-
-        <h2>
-            Gate Verification
-        </h2>
-
-        <p>
-            Enter visitor phone number
-            to verify pre-approval.
-        </p>
-
-
-        <form id="gateForm">
-
-            <div class="form-row">
-
-                <input
-                        type="text"
-                        id="gatePhone"
-                        placeholder="Enter visitor phone number"
-                        required
-                >
-
-
-                <button type="submit">
-                    Verify Visitor
-                </button>
-
-            </div>
-
-        </form>
-
-    </section>
-
-
-    <!-- RESULT -->
-
-    <section
-            id="resultCard"
-            class="card"
-            style="display:none;"
-    >
-
-        <h2>
-            Verification Result
-        </h2>
-
-        <div id="resultMessage"></div>
-
-    </section>
-
-
-    <!-- PROCESS -->
-
-    <section class="card">
-
-        <h2>
-            Verification Process
-        </h2>
-
-        <ol>
-
-            <li>
-                Visitor enters phone number.
-            </li>
-
-            <li>
-                System checks approved visitor.
-            </li>
-
-            <li>
-                Date and time are checked.
-            </li>
-
-            <li>
-                If valid, entry is recorded.
-            </li>
-
-            <li>
-                Visitor can later record exit.
-            </li>
-
-        </ol>
-
-    </section>
-
-
-</main>
-
-
 <script>
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+    document.getElementById("gateForm").addEventListener("submit", async function(event) {
 
+        event.preventDefault();
 
-            const form =
-                document.getElementById(
-                    "gateForm"
-                );
+        const phone = document.getElementById("gatePhone").value.trim();
+        const result = document.getElementById("gateResult");
 
+        console.log("Phone entered:", phone);
 
-            const phoneInput =
-                document.getElementById(
-                    "gatePhone"
-                );
+        if (phone === "") {
+            result.style.display = "block";
+            result.innerText = "Please enter phone number";
+            return;
+        }
 
+        result.style.display = "block";
+        result.innerText = "Verifying...";
 
-            const resultCard =
-                document.getElementById(
-                    "resultCard"
-                );
+        try {
 
-
-            const resultMessage =
-                document.getElementById(
-                    "resultMessage"
-                );
-
-
-            form.addEventListener(
-                "submit",
-                async function (event) {
-
-                    event.preventDefault();
-
-
-                    const phone =
-                        phoneInput.value.trim();
-
-
-                    if (phone === "") {
-
-                        alert(
-                            "Please enter visitor phone number"
-                        );
-
-                        return;
-                    }
-
-
-                    console.log(
-                        "Verifying phone:",
-                        phone
-                    );
-
-
-                    resultCard.style.display =
-                        "block";
-
-
-                    resultMessage.innerHTML =
-                        "<p>Checking visitor...</p>";
-
-
-                    try {
-
-
-                        /*
-                         * IMPORTANT
-                         *
-                         * Backend expects:
-                         *
-                         * @RequestParam String phone
-                         *
-                         * Therefore phone must be
-                         * sent as query parameter.
-                         */
-
-                        const url =
-                            "/api/gate/verify?phone=" +
-                            encodeURIComponent(phone);
-
-
-                        console.log(
-                            "Request URL:",
-                            url
-                        );
-
-
-                        const response =
-                            await fetch(
-                                url,
-                                {
-                                    method: "POST"
-                                }
-                            );
-
-
-                        const message =
-                            await response.text();
-
-
-                        console.log(
-                            "Response:",
-                            response.status,
-                            message
-                        );
-
-
-                        if (!response.ok) {
-
-                            resultMessage.innerHTML = `
-
-                            <div class="error-box">
-
-                                <h3>
-                                    Verification Failed
-                                </h3>
-
-                                <p>
-                                    ${message}
-                                </p>
-
-                            </div>
-
-                        `;
-
-                            alert(message);
-
-                            return;
-                        }
-
-
-                        /*
-                         * SUCCESS
-                         */
-
-                        resultMessage.innerHTML = `
-
-                        <div class="success-box">
-
-                            <h3>
-                                Visitor Verified
-                            </h3>
-
-                            <p>
-                                ${message}
-                            </p>
-
-                            <p>
-                                Phone:
-                                <strong>
-                                    ${phone}
-                                </strong>
-                            </p>
-
-                        </div>
-
-                    `;
-
-
-                        alert(message);
-
-
-                        /*
-                         * Clear input
-                         */
-
-                        phoneInput.value = "";
-
-
-                    }
-                    catch (error) {
-
-                        console.error(
-                            "Gate verification error:",
-                            error
-                        );
-
-
-                        resultMessage.innerHTML = `
-
-                        <div class="error-box">
-
-                            <h3>
-                                Server Error
-                            </h3>
-
-                            <p>
-                                Unable to connect
-                                to backend server.
-                            </p>
-
-                        </div>
-
-                    `;
-
-
-                        alert(
-                            "Unable to connect to server"
-                        );
-
-                    }
-
+            const response = await fetch(
+                "http://localhost:8081/api/gate/verify?phone=" +
+                encodeURIComponent(phone),
+                {
+                    method: "POST"
                 }
-
             );
 
+            console.log("HTTP Status:", response.status);
+
+            const message = await response.text();
+
+            console.log("Backend Response:", message);
+
+            result.style.display = "block";
+            result.innerText = message;
+
+            if (message.includes("Entry Allowed")) {
+                result.style.background = "#d1fae5";
+                result.style.color = "#065f46";
+            } else {
+                result.style.background = "#fee2e2";
+                result.style.color = "#991b1b";
+            }
+
+        } catch (error) {
+
+            console.error("ERROR:", error);
+
+            result.style.display = "block";
+            result.innerText =
+                "Cannot connect to backend: " + error.message;
+
+            result.style.background = "#fee2e2";
+            result.style.color = "#991b1b";
         }
 
-    );
+    });
 
 </script>
-
-
-<style>
-
-    .form-row {
-
-        display: grid;
-
-        grid-template-columns:
-        1fr 1fr;
-
-        gap: 12px;
-
-    }
-
-
-    .form-row input {
-
-        width: 100%;
-
-        box-sizing: border-box;
-
-    }
-
-
-    .form-row button {
-
-        width: 100%;
-
-    }
-
-
-    .success-box {
-
-        padding: 18px;
-
-        background: #e8f7ee;
-
-        border-left: 5px solid #198754;
-
-        border-radius: 6px;
-
-        color: #155724;
-
-    }
-
-
-    .success-box h3 {
-
-        margin-top: 0;
-
-    }
-
-
-    .error-box {
-
-        padding: 18px;
-
-        background: #fdeaea;
-
-        border-left: 5px solid #dc3545;
-
-        border-radius: 6px;
-
-        color: #842029;
-
-    }
-
-
-    .error-box h3 {
-
-        margin-top: 0;
-
-    }
-
-
-    @media (max-width: 700px) {
-
-        .form-row {
-
-            grid-template-columns: 1fr;
-
-        }
-
-    }
-
-</style>
-
-
-</body>
-
-</html>

@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/gate")
 public class GateController {
 
-    GateService gateService;
+    private final GateService gateService;
 
     public GateController(GateService gateService) {
         this.gateService = gateService;
     }
 
     @PostMapping("/verify")
-    public String verifyVisitor(@RequestParam String phone) {
+    public String verifyVisitor(@RequestParam("phone") String phone) {
 
         return gateService.verifyVisitor(phone);
     }
