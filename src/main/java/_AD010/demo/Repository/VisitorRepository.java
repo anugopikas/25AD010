@@ -1,4 +1,7 @@
 package _AD010.demo.Repository;
 
-public interface VisitorRepository {
+import _AD010.demo.Models.Visitor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface VisitorRepository extends JpaRepository<Visitor, Long> {
 }
