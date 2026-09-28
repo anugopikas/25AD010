@@ -25,7 +25,8 @@ public class GateService {
 
     public String verifyVisitor(String phone) {
 
-        Visitor visitor = visitorRepository.findByPhone(phone);
+        Visitor visitor =
+                visitorRepository.findTopByPhoneOrderByIdDesc(phone);
 
         if (visitor == null) {
             return "Visitor not found - Entry Rejected";
@@ -53,13 +54,15 @@ public class GateService {
             return "Visit time is not allowed - Entry Rejected";
         }
 
-        // Create entry record
         VisitorEntry visitorEntry = new VisitorEntry();
 
         visitorEntry.setPhone(phone);
+
         visitorEntry.setEntryTime(
-                LocalDate.now() + " " + LocalTime.now()
+                LocalDate.now() + " " +
+                        LocalTime.now()
         );
+
         visitorEntry.setStatus("IN");
 
         visitorEntryRepository.save(visitorEntry);

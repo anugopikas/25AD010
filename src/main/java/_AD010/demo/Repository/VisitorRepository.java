@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
 
-    Visitor findByPhone(String phone);
+    Visitor findTopByPhoneOrderByIdDesc(String phone);
+
 }
