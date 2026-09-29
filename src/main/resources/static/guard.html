@@ -1,167 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VisitorPass - Security Guards</title>
-
-    <link rel="stylesheet"
-          href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-
 <header class="header">
-
-    <div class="logo">
-        VisitorPass
-    </div>
-
-    <div class="subtitle">
-        Security Guard Management
-    </div>
-
+    <div class="logo">VisitorPass</div>
+    <div class="subtitle">Security Guard Management</div>
 </header>
 
-
 <nav class="navbar">
-
     <a href="/index.html">Dashboard</a>
-
     <a href="/resident.html">Residents</a>
-
     <a href="/visitor.html">Visitors</a>
-
     <a href="/gate.html">Gate Verification</a>
-
     <a href="/entry.html">Entry / Exit</a>
-
     <a href="/guard.html">Security Guards</a>
-
 </nav>
-
 
 <main class="container">
 
-
+    <!-- ADD GUARD -->
     <div class="card">
-
-        <h2>
-            Add Security Guard
-        </h2>
-
+        <h2>Add Security Guard</h2>
 
         <form id="guardForm">
 
             <div class="form-grid">
 
+                <div class="form-group">
+                    <label>Guard Name</label>
+                    <input
+                            type="text"
+                            id="name"
+                            placeholder="Guard Name"
+                            required>
+                </div>
 
-                <input
-                        type="text"
-                        id="guardName"
-                        placeholder="Guard Name"
-                        required>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input
+                            type="text"
+                            id="phone"
+                            placeholder="Phone Number"
+                            maxlength="10"
+                            required>
+                </div>
 
+                <div class="form-group">
+                    <label>Email</label>
+                    <input
+                            type="email"
+                            id="email"
+                            placeholder="Email"
+                            required>
+                </div>
 
-                <input
-                        type="text"
-                        id="guardPhone"
-                        placeholder="Phone Number"
-                        required>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input
+                            type="text"
+                            id="address"
+                            placeholder="Address"
+                            required>
+                </div>
 
-
-                <input
-                        type="email"
-                        id="guardEmail"
-                        placeholder="Email">
-
-
-                <input
-                        type="text"
-                        id="guardAddress"
-                        placeholder="Address">
-
-
-                <input
-                        type="text"
-                        id="guardShift"
-                        placeholder="Shift">
-
+                <div class="form-group">
+                    <label>Shift</label>
+                    <input
+                            type="text"
+                            id="shift"
+                            placeholder="Morning / Evening / Night"
+                            required>
+                </div>
 
             </div>
 
-
-            <br>
-
-
-            <button
-                    type="submit">
-
-                Add Guard
-
-            </button>
+            <button type="submit">Add Guard</button>
 
         </form>
 
+        <p id="message"></p>
     </div>
 
 
-
+    <!-- GUARD LIST -->
     <div class="card">
-
-        <h2>
-            Security Guards
-        </h2>
-
+        <h2>Security Guards</h2>
 
         <div class="table-wrapper">
 
             <table>
 
                 <thead>
-
                 <tr>
-
                     <th>ID</th>
-
                     <th>Name</th>
-
                     <th>Phone</th>
-
                     <th>Email</th>
-
                     <th>Address</th>
-
                     <th>Shift</th>
-
+                    <th>Action</th>
                 </tr>
-
                 </thead>
 
-
-                <tbody id="guardTableBody">
-
-                </tbody>
+                <tbody id="guardTable"></tbody>
 
             </table>
 
         </div>
-
     </div>
-
 
 </main>
 
 
-<script src="/js/script.js"></script>
+<script>
+
+    function loadGuards() {
+
+        fetch("/api/guard/getall")
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Guard API failed");
+                }
+
+                return response.json();
+
+            })
+
+            .then(data => {
+
+                const table = document.getElementById("guardTable");
+
+                table.innerHTML = "";
+
+                data.forEach(guard => {
+
+                    const id = guard.Id ?? guard.id ?? "";
+                    const name = guard.Name ?? guard.name ?? "";
+                    const phone = guard.Phone ?? guard.phone ?? "";
+                    const email = guard.Email ?? guard.email ?? "";
+                    const address = guard.Address ?? guard.address ?? "";
+                    const shift = guard.Shift ?? guard.shift ?? "";
+
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                    <td>${id}</td>
+                    <td>${name}</td>
+                    <td>${phone}</td>
+                    <td>${email}</td>
+                    <td>${address}</td>
+                    <td>${shift}</td>
+                    <td>
+                        <button type="button"
+                                onclick="deleteGuard(${id})">
+                            Delete
+                        </button>
+                    </td>
+                `;
+
+                    table.appendChild(row);
+
+                });
+
+            })
+
+            .catch(error => {
+
+                console.error("Load Guard Error:", error);
+
+                alert("Unable to load security guards");
+
+            });
+    }
+
+
+    document.getElementById("guardForm").addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            const name =
+                document.getElementById("name").value.trim();
+
+            const phone =
+                document.getElementById("phone").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const address =
+                document.getElementById("address").value.trim();
+
+            const shift =
+                document.getElementById("shift").value.trim();
+
+            const message =
+                document.getElementById("message");
+
+
+            /* PHONE VALIDATION */
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+
+                alert("Please enter a valid 10 digit phone number");
+
+                return;
+            }
+
+
+            /* GUARD OBJECT */
+
+            const guard = {
+
+                Name: name,
+                Phone: phone,
+                Email: email,
+                Address: address,
+                Shift: shift
+
+            };
+
+
+            message.innerText = "Adding security guard...";
+
+
+            fetch("/api/guard/create", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(guard)
+
+            })
+
+                .then(response => {
+
+                    return response.text().then(data => ({
+
+                        ok: response.ok,
+
+                        status: response.status,
+
+                        data: data
+
+                    }));
+
+                })
+
+                .then(result => {
+
+                    /* ERROR */
+
+                    if (!result.ok) {
+
+                        console.error(
+                            "Guard API Error:",
+                            result.status,
+                            result.data
+                        );
+
+                        alert(result.data || "Failed to add security guard");
+
+                        message.innerText = "Failed to add security guard";
+
+                        return;
+                    }
+
+
+                    /* SUCCESS - NO ALERT */
+
+                    message.innerText =
+                        "Security guard added successfully";
+
+
+                    /* CLEAR FORM */
+
+                    document.getElementById("guardForm").reset();
+
+
+                    /* RELOAD TABLE */
+
+                    loadGuards();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Guard Connection Error:",
+                        error
+                    );
+
+                    alert("Unable to connect to server");
+
+                    message.innerText =
+                        "Failed to add security guard";
+
+                });
+
+        }
+    );
+
+
+    /* DELETE GUARD */
+
+    function deleteGuard(id) {
+
+        fetch("/api/guard/delete/" + id, {
+
+            method: "DELETE"
+
+        })
+
+            .then(response => {
+
+                return response.text().then(data => ({
+
+                    ok: response.ok,
+
+                    status: response.status,
+
+                    data: data
+
+                }));
+
+            })
+
+            .then(result => {
+
+                if (!result.ok) {
+
+                    console.error(
+                        "Delete Guard Error:",
+                        result.status,
+                        result.data
+                    );
+
+                    alert(result.data || "Failed to delete guard");
+
+                    return;
+                }
+
+                document.getElementById("message").innerText =
+                    "Security guard deleted successfully";
+
+                loadGuards();
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Delete Guard Connection Error:",
+                    error
+                );
+
+                alert("Unable to connect to server");
+
+            });
+
+    }
+
+
+    /* LOAD DATA */
+
+    loadGuards();
+
+</script>
 
 </body>
-
 </html>

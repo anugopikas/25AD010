@@ -17,6 +17,9 @@
 
 <body>
 
+
+<!-- HEADER -->
+
 <header class="header">
 
     <div class="logo">
@@ -24,11 +27,13 @@
     </div>
 
     <div class="subtitle">
-        Visitor Entry / Exit Management
+        Visitor Management
     </div>
 
 </header>
 
+
+<!-- NAVIGATION -->
 
 <nav class="navbar">
 
@@ -44,6 +49,10 @@
         Visitors
     </a>
 
+    <a href="/gate.html">
+        Gate Verification
+    </a>
+
     <a href="/entry.html">
         Entry / Exit
     </a>
@@ -55,22 +64,9 @@
 </nav>
 
 
+<!-- MAIN -->
+
 <main class="container">
-
-
-    <!-- PAGE TITLE -->
-
-    <div class="card">
-
-        <h2>
-            Entry / Exit Management
-        </h2>
-
-        <p>
-            Record visitor exit and view entry records
-        </p>
-
-    </div>
 
 
     <!-- EXIT FORM -->
@@ -78,40 +74,57 @@
     <div class="card">
 
         <h2>
-            Record Visitor Exit
+            Visitor Entry / Exit
         </h2>
-
 
         <form id="exitForm">
 
+            <div class="form-grid">
 
-            <label>
-                Visitor Phone Number
-            </label>
+                <div class="form-group">
 
+                    <label>
+                        Visitor Phone Number
+                    </label>
 
-            <input
-                    type="text"
-                    id="phone"
-                    placeholder="Enter visitor phone number"
-                    required
-            >
+                    <input
+                            type="text"
+                            id="phone"
+                            placeholder="Visitor Phone Number"
+                            maxlength="10"
+                            required
+                    >
+
+                </div>
+
+            </div>
 
 
             <button type="submit">
                 Record Exit
             </button>
 
-
         </form>
-
-
-        <p id="message"></p>
 
     </div>
 
 
-    <!-- ENTRY TABLE -->
+    <!-- RESULT -->
+
+    <div class="card">
+
+        <h2>
+            Exit Result
+        </h2>
+
+        <p id="message">
+            Enter visitor phone number and record exit.
+        </p>
+
+    </div>
+
+
+    <!-- ENTRY RECORDS -->
 
     <div class="card">
 
@@ -120,32 +133,36 @@
         </h2>
 
 
-        <table>
+        <div class="table-wrapper">
 
-            <thead>
+            <table>
 
-            <tr>
+                <thead>
 
-                <th>ID</th>
+                <tr>
 
-                <th>Phone</th>
+                    <th>ID</th>
 
-                <th>Entry Time</th>
+                    <th>Phone</th>
 
-                <th>Exit Time</th>
+                    <th>Entry Time</th>
 
-                <th>Status</th>
+                    <th>Exit Time</th>
 
-            </tr>
+                    <th>Status</th>
 
-            </thead>
+                </tr>
+
+                </thead>
 
 
-            <tbody id="entryTable">
+                <tbody id="entryTable">
 
-            </tbody>
+                </tbody>
 
-        </table>
+            </table>
+
+        </div>
 
     </div>
 
@@ -172,7 +189,8 @@
                 if (!response.ok) {
 
                     throw new Error(
-                        "Entry API failed"
+                        "Entry API error: "
+                        + response.status
                     );
 
                 }
@@ -186,7 +204,7 @@
             .then(data => {
 
 
-                let table =
+                const table =
                     document.getElementById(
                         "entryTable"
                     );
@@ -195,33 +213,70 @@
                 table.innerHTML = "";
 
 
+                if (!Array.isArray(data)) {
+
+                    throw new Error(
+                        "Invalid entry data"
+                    );
+
+                }
+
+
                 data.forEach(entry => {
 
 
-                    let row =
-                        document.createElement("tr");
+                    const id =
+                        entry.Id ??
+                        entry.id ??
+                        "";
+
+
+                    const phone =
+                        entry.phone ??
+                        "";
+
+
+                    const entryTime =
+                        entry.entryTime ??
+                        "";
+
+
+                    const exitTime =
+                        entry.exitTime ??
+                        "-";
+
+
+                    const status =
+                        entry.status ??
+                        "";
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
 
 
                     row.innerHTML = `
 
                     <td>
-                        ${entry.id}
+                        ${id}
                     </td>
 
                     <td>
-                        ${entry.phone}
+                        ${phone}
                     </td>
 
                     <td>
-                        ${entry.entryTime}
+                        ${entryTime}
                     </td>
 
                     <td>
-                        ${entry.exitTime || "-"}
+                        ${exitTime}
                     </td>
 
                     <td>
-                        ${entry.status}
+                        ${status}
                     </td>
 
                 `;
@@ -229,9 +284,7 @@
 
                     table.appendChild(row);
 
-
                 });
-
 
             })
 
@@ -240,10 +293,18 @@
 
 
                 console.error(
-                    "Entry API Error:",
+                    "Load Entry Error:",
                     error
                 );
 
+
+                /*
+                 * Table loading error மட்டும் alert
+                 */
+
+                alert(
+                    "Unable to load entry records"
+                );
 
             });
 
@@ -264,23 +325,45 @@
                 event.preventDefault();
 
 
-                let phone =
-                    document.getElementById(
-                        "phone"
-                    ).value.trim();
+                const phone =
+                    document
+                        .getElementById("phone")
+                        .value
+                        .trim();
 
 
-                if (phone === "") {
-
+                const message =
                     document.getElementById(
                         "message"
-                    ).innerText =
-                        "Please enter phone number";
+                    );
+
+
+                /* =========================
+                   PHONE VALIDATION
+                   ========================= */
+
+                if (
+                    !/^[0-9]{10}$/.test(phone)
+                ) {
+
+
+                    alert(
+                        "Please enter a valid 10 digit phone number"
+                    );
+
 
                     return;
 
                 }
 
+
+                message.innerText =
+                    "Recording visitor exit...";
+
+
+                /* =========================
+                   EXIT API
+                   ========================= */
 
                 fetch(
                     "/api/entry/exit?phone="
@@ -296,26 +379,79 @@
                     .then(response => {
 
 
-                        return response.text();
+                        return response.text()
+                            .then(data => ({
+
+                                ok:
+                                response.ok,
+
+                                status:
+                                response.status,
+
+                                data:
+                                data
+
+                            }));
 
                     })
 
 
-                    .then(data => {
+                    .then(result => {
 
 
-                        document.getElementById(
-                            "message"
-                        ).innerText = data;
+                        /* =========================
+                           ERROR RESPONSE
+                           ========================= */
+
+                        if (!result.ok) {
 
 
-                        document.getElementById(
-                            "exitForm"
-                        ).reset();
+                            console.error(
+                                "Exit API Error:",
+                                result.status,
+                                result.data
+                            );
 
+
+                            alert(
+                                result.data ||
+                                "Exit failed"
+                            );
+
+
+                            message.innerText =
+                                "Exit failed";
+
+
+                            return;
+
+                        }
+
+
+                        /* =========================
+                           SUCCESS
+                           NO POPUP
+                           ========================= */
+
+                        message.innerText =
+                            result.data ||
+                            "Visitor exit recorded successfully";
+
+
+                        /*
+                         * Clear phone input
+                         */
+
+                        document
+                            .getElementById("phone")
+                            .value = "";
+
+
+                        /*
+                         * Refresh table
+                         */
 
                         loadEntries();
-
 
                     })
 
@@ -323,24 +459,33 @@
                     .catch(error => {
 
 
-                        document.getElementById(
-                            "message"
-                        ).innerText =
-                            "Error connecting to server";
+                        console.error(
+                            "Exit Connection Error:",
+                            error
+                        );
 
 
-                        console.error(error);
+                        /*
+                         * CONNECTION ERROR
+                         * ONLY HERE ALERT
+                         */
 
+                        alert(
+                            "Unable to connect to server"
+                        );
+
+
+                        message.innerText =
+                            "Exit failed";
 
                     });
-
 
             }
         );
 
 
     /* =========================================
-       LOAD DATA WHEN PAGE OPENS
+       INITIAL LOAD
        ========================================= */
 
     loadEntries();
