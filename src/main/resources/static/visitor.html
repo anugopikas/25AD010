@@ -2,17 +2,12 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>VisitorPass - Visitors</title>
 
-    <link rel="stylesheet"
-          href="/css/style.css">
-
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
@@ -32,36 +27,29 @@
 
 <nav class="navbar">
 
-    <a href="/index.html">
-        Dashboard
-    </a>
+    <a href="/index.html">Dashboard</a>
 
-    <a href="/resident.html">
-        Residents
-    </a>
+    <a href="/resident.html">Residents</a>
 
-    <a href="/visitor.html">
-        Visitors
-    </a>
+    <a href="/visitor.html">Visitors</a>
 
-    <a href="/entry.html">
-        Entry / Exit
-    </a>
+    <a href="/gate.html">Gate Verification</a>
 
-    <a href="/guard.html">
-        Security Guards
-    </a>
+    <a href="/entry.html">Entry / Exit</a>
+
+    <a href="/guard.html">Security Guards</a>
 
 </nav>
 
 
 <main class="container">
 
+
+    <!-- PAGE TITLE -->
+
     <div class="card">
 
-        <h2>
-            Visitor Management
-        </h2>
+        <h2>Visitor Management</h2>
 
         <p>
             Create and view visitor pre-approvals
@@ -70,66 +58,123 @@
     </div>
 
 
+    <!-- ADD VISITOR -->
+
     <div class="card">
 
-        <h2>
-            Add Visitor
-        </h2>
+        <h2>Add Visitor</h2>
 
         <form id="visitorForm">
 
-            <label>Visitor Name</label>
-
-            <input
-                    type="text"
-                    id="name"
-                    required
-            >
+            <div class="form-grid">
 
 
-            <label>Phone</label>
+                <!-- VISITOR NAME -->
 
-            <input
-                    type="text"
-                    id="phone"
-                    required
-            >
+                <div class="form-group">
 
+                    <label for="name">
+                        Visitor Name
+                    </label>
 
-            <label>Visit Date</label>
+                    <input
+                            type="text"
+                            id="name"
+                            placeholder="Enter visitor name"
+                            required
+                    >
 
-            <input
-                    type="date"
-                    id="visitDate"
-                    required
-            >
-
-
-            <label>From Time</label>
-
-            <input
-                    type="time"
-                    id="fromTime"
-                    required
-            >
+                </div>
 
 
-            <label>To Time</label>
+                <!-- PHONE -->
 
-            <input
-                    type="time"
-                    id="toTime"
-                    required
-            >
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <input
+                            type="text"
+                            id="phone"
+                            placeholder="Enter 10 digit phone number"
+                            maxlength="10"
+                            required
+                    >
+
+                </div>
 
 
-            <label>Flat ID</label>
+                <!-- VISIT DATE -->
 
-            <input
-                    type="number"
-                    id="flatId"
-                    required
-            >
+                <div class="form-group">
+
+                    <label for="visitDate">
+                        Visit Date
+                    </label>
+
+                    <input
+                            type="date"
+                            id="visitDate"
+                            required
+                    >
+
+                </div>
+
+
+                <!-- FROM TIME -->
+
+                <div class="form-group">
+
+                    <label for="fromTime">
+                        From Time
+                    </label>
+
+                    <input
+                            type="time"
+                            id="fromTime"
+                            required
+                    >
+
+                </div>
+
+
+                <!-- TO TIME -->
+
+                <div class="form-group">
+
+                    <label for="toTime">
+                        To Time
+                    </label>
+
+                    <input
+                            type="time"
+                            id="toTime"
+                            required
+                    >
+
+                </div>
+
+
+                <!-- FLAT ID -->
+
+                <div class="form-group">
+
+                    <label for="flatId">
+                        Flat ID
+                    </label>
+
+                    <input
+                            type="number"
+                            id="flatId"
+                            placeholder="Enter flat ID"
+                            required
+                    >
+
+                </div>
+
+            </div>
 
 
             <button type="submit">
@@ -138,133 +183,61 @@
 
         </form>
 
+
         <p id="message"></p>
 
     </div>
 
 
+    <!-- VISITOR LIST -->
+
     <div class="card">
 
-        <h2>
-            Visitor List
-        </h2>
+        <h2>Visitor List</h2>
 
-        <table>
+        <div class="table-wrapper">
 
-            <thead>
+            <table>
 
-            <tr>
+                <thead>
 
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Visit Date</th>
-                <th>From Time</th>
-                <th>To Time</th>
-                <th>Flat ID</th>
+                <tr>
 
-            </tr>
+                    <th>ID</th>
 
-            </thead>
+                    <th>Name</th>
+
+                    <th>Phone</th>
+
+                    <th>Visit Date</th>
+
+                    <th>From Time</th>
+
+                    <th>To Time</th>
+
+                    <th>Flat ID</th>
+
+                </tr>
+
+                </thead>
 
 
-            <tbody id="visitorTable">
+                <tbody id="visitorTable">
 
-            </tbody>
+                </tbody>
 
-        </table>
+            </table>
+
+        </div>
 
     </div>
+
 
 </main>
 
 
-<script>
+<script src="/js/script.js"></script>
 
-    function loadVisitors() {
+</body>
 
-        fetch("/api/visitor/getall")
-
-            .then(response => response.json())
-
-            .then(data => {
-
-                let table =
-                    document.getElementById("visitorTable");
-
-                table.innerHTML = "";
-
-                data.forEach(visitor => {
-
-                    let row =
-                        document.createElement("tr");
-
-                    row.innerHTML = `
-
-                        <td>${visitor.id}</td>
-
-                        <td>${visitor.name}</td>
-
-                        <td>${visitor.phone}</td>
-
-                        <td>${visitor.visitDate}</td>
-
-                        <td>${visitor.fromTime}</td>
-
-                        <td>${visitor.toTime}</td>
-
-                        <td>${visitor.flatId}</td>
-
-                    `;
-
-                    table.appendChild(row);
-
-                });
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Visitor API Error:",
-                    error
-                );
-
-            });
-
-    }
-
-
-    document
-        .getElementById("visitorForm")
-        .addEventListener("submit", function(event) {
-
-            event.preventDefault();
-
-
-            let visitor = {
-
-                name:
-                document.getElementById("name").value,
-
-                phone:
-                document.getElementById("phone").value,
-
-                visitDate:
-                document.getElementById("visitDate").value,
-
-                fromTime:
-                document.getElementById("fromTime").value,
-
-                toTime:
-                document.getElementById("toTime").value,
-
-                flatId:
-                    Number(
-                        document.getElementById("flatId").value
-                    )
-
-            };
-
-
-            fetch("/api/visitor/create
+</html>

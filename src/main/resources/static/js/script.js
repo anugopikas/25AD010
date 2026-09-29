@@ -1,60 +1,104 @@
-// ==========================================
-// VisitorPass - Main JavaScript
-// ==========================================
+// ======================================================
+// VisitorPass - script.js
+// ======================================================
 
 
-// ==========================================
+// ======================================================
 // DASHBOARD
-// ==========================================
+// ======================================================
 
 function loadDashboard() {
 
+    // -----------------------------
+    // Resident Count
+    // -----------------------------
+
     fetch("/api/resident/getall")
         .then(response => {
+
             if (!response.ok) {
                 throw new Error("Resident API failed");
             }
+
             return response.json();
+
         })
         .then(data => {
-            const element = document.getElementById("residentCount");
+
+            const element =
+                document.getElementById("residentCount");
 
             if (element) {
-                element.innerText = data.length;
+                element.innerText =
+                    Array.isArray(data) ? data.length : 0;
             }
+
         })
         .catch(error => {
-            console.error("Resident API Error:", error);
+
+            console.error(
+                "Resident Dashboard Error:",
+                error
+            );
+
         });
 
+
+    // -----------------------------
+    // Visitor Count
+    // -----------------------------
 
     fetch("/api/visitor/getall")
         .then(response => {
+
             if (!response.ok) {
                 throw new Error("Visitor API failed");
             }
+
             return response.json();
+
         })
         .then(data => {
-            const element = document.getElementById("visitorCount");
+
+            const element =
+                document.getElementById("visitorCount");
 
             if (element) {
-                element.innerText = data.length;
+                element.innerText =
+                    Array.isArray(data) ? data.length : 0;
             }
+
         })
         .catch(error => {
-            console.error("Visitor API Error:", error);
+
+            console.error(
+                "Visitor Dashboard Error:",
+                error
+            );
+
         });
 
 
+    // -----------------------------
+    // Entry Count
+    // -----------------------------
+
     fetch("/api/entry/getall")
         .then(response => {
+
             if (!response.ok) {
                 throw new Error("Entry API failed");
             }
+
             return response.json();
+
         })
         .then(data => {
+
+            if (!Array.isArray(data)) {
+                return;
+            }
+
 
             const entryElement =
                 document.getElementById("entryCount");
@@ -67,41 +111,62 @@ function loadDashboard() {
 
 
             if (entryElement) {
-                entryElement.innerText = data.length;
+
+                entryElement.innerText =
+                    data.length;
+
             }
 
 
-            if (inElement) {
-
-                const inCount = data.filter(entry =>
-                    String(entry.status || "").toUpperCase() === "IN"
+            const inCount =
+                data.filter(entry =>
+                    String(entry.status || "")
+                        .toUpperCase() === "IN"
                 ).length;
 
-                inElement.innerText = inCount;
+
+            const outCount =
+                data.filter(entry =>
+                    String(entry.status || "")
+                        .toUpperCase() === "OUT"
+                ).length;
+
+
+            if (inElement) {
+                inElement.innerText =
+                    inCount;
             }
 
 
             if (outElement) {
-
-                const outCount = data.filter(entry =>
-                    String(entry.status || "").toUpperCase() === "OUT"
-                ).length;
-
-                outElement.innerText = outCount;
+                outElement.innerText =
+                    outCount;
             }
 
         })
         .catch(error => {
-            console.error("Entry API Error:", error);
+
+            console.error(
+                "Entry Dashboard Error:",
+                error
+            );
+
         });
 
 
+    // -----------------------------
+    // Guard Count
+    // -----------------------------
+
     fetch("/api/guard/getall")
         .then(response => {
+
             if (!response.ok) {
                 throw new Error("Guard API failed");
             }
+
             return response.json();
+
         })
         .then(data => {
 
@@ -109,28 +174,51 @@ function loadDashboard() {
                 document.getElementById("guardCount");
 
             if (element) {
-                element.innerText = data.length;
+
+                element.innerText =
+                    Array.isArray(data)
+                        ? data.length
+                        : 0;
+
             }
 
         })
         .catch(error => {
-            console.error("Guard API Error:", error);
+
+            console.error(
+                "Guard Dashboard Error:",
+                error
+            );
+
         });
+
 }
 
 
-// ==========================================
-// RESIDENT
-// ==========================================
+// ======================================================
+// RESIDENT - LOAD LIST
+// ======================================================
 
 function loadResidents() {
+
+    const table =
+        document.getElementById("residentTable");
+
+    if (!table) {
+        return;
+    }
+
 
     fetch("/api/resident/getall")
 
         .then(response => {
 
             if (!response.ok) {
-                throw new Error("Resident API failed");
+
+                throw new Error(
+                    "Resident API failed"
+                );
+
             }
 
             return response.json();
@@ -139,34 +227,63 @@ function loadResidents() {
 
         .then(data => {
 
-            const table =
-                document.getElementById("residentTable");
+            console.log(
+                "Resident data:",
+                data
+            );
 
-            if (!table) {
+
+            table.innerHTML = "";
+
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            No residents found
+                        </td>
+                    </tr>
+                `;
+
                 return;
             }
 
-            table.innerHTML = "";
 
             data.forEach(resident => {
 
                 const id =
-                    resident.Id ?? resident.id ?? "";
+                    resident.Id ??
+                    resident.id ??
+                    "";
 
                 const name =
-                    resident.Name ?? resident.name ?? "";
+                    resident.Name ??
+                    resident.name ??
+                    "";
 
                 const phone =
-                    resident.Phone ?? resident.phone ?? "";
+                    resident.Phone ??
+                    resident.phone ??
+                    "";
 
                 const email =
-                    resident.Email ?? resident.email ?? "";
+                    resident.Email ??
+                    resident.email ??
+                    "";
 
                 const address =
-                    resident.Address ?? resident.address ?? "";
+                    resident.Address ??
+                    resident.address ??
+                    "";
 
                 const flatId =
-                    resident.FlatId ?? resident.flatId ?? "";
+                    resident.FlatId ??
+                    resident.flatId ??
+                    "";
 
 
                 const row =
@@ -174,12 +291,19 @@ function loadResidents() {
 
 
                 row.innerHTML = `
+
                     <td>${id}</td>
+
                     <td>${name}</td>
+
                     <td>${phone}</td>
+
                     <td>${email}</td>
+
                     <td>${address}</td>
+
                     <td>${flatId}</td>
+
                 `;
 
 
@@ -192,15 +316,27 @@ function loadResidents() {
         .catch(error => {
 
             console.error(
-                "Load Resident Error:",
+                "Resident API Error:",
                 error
             );
 
-            alert("Unable to load residents");
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        Unable to load residents
+                    </td>
+                </tr>
+            `;
 
         });
+
 }
 
+
+// ======================================================
+// RESIDENT - ADD
+// ======================================================
 
 function setupResidentForm() {
 
@@ -212,154 +348,215 @@ function setupResidentForm() {
     }
 
 
-    form.addEventListener("submit", function(event) {
+    form.addEventListener(
+        "submit",
+        function(event) {
 
-        event.preventDefault();
-
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const address =
-            document.getElementById("address").value.trim();
-
-        const flatId =
-            Number(document.getElementById("flatId").value);
+            event.preventDefault();
 
 
-        const message =
-            document.getElementById("message");
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
 
 
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            alert(
-                "Please enter a valid 10 digit phone number"
-            );
-
-            return;
-        }
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
 
 
-        const resident = {
-
-            Name: name,
-            Phone: phone,
-            Email: email,
-            Address: address,
-            FlatId: flatId
-
-        };
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
 
-        if (message) {
-            message.innerText =
-                "Adding resident...";
-        }
+            const address =
+                document
+                    .getElementById("address")
+                    .value
+                    .trim();
 
 
-        fetch("/api/resident/create", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(resident)
-
-        })
-
-            .then(response => {
-
-                return response.text().then(data => ({
-
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-
-                }));
-
-            })
-
-            .then(result => {
-
-                if (!result.ok) {
-
-                    console.error(
-                        "Resident API Error:",
-                        result.status,
-                        result.data
-                    );
-
-                    alert(
-                        result.data ||
-                        "Failed to add resident"
-                    );
-
-                    if (message) {
-                        message.innerText =
-                            "Failed to add resident";
-                    }
-
-                    return;
-                }
-
-
-                // SUCCESS - NO ALERT
-
-                if (message) {
-                    message.innerText =
-                        "Resident added successfully";
-                }
-
-
-                form.reset();
-
-
-                loadResidents();
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Resident Connection Error:",
-                    error
+            const flatId =
+                Number(
+                    document
+                        .getElementById("flatId")
+                        .value
                 );
 
-                alert("Unable to connect to server");
 
-                if (message) {
-                    message.innerText =
-                        "Failed to add resident";
+            const message =
+                document.getElementById("message");
+
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+
+                alert(
+                    "Please enter a valid 10 digit phone number"
+                );
+
+                return;
+            }
+
+
+            const resident = {
+
+                Name: name,
+
+                Phone: phone,
+
+                Email: email,
+
+                Address: address,
+
+                FlatId: flatId
+
+            };
+
+
+            if (message) {
+
+                message.innerText =
+                    "Adding resident...";
+
+            }
+
+
+            fetch(
+                "/api/resident/create",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(resident)
+
                 }
+            )
 
-            });
+                .then(response => {
 
-    });
+                    return response.text()
+                        .then(data => {
+
+                            return {
+
+                                ok: response.ok,
+
+                                status:
+                                response.status,
+
+                                data: data
+
+                            };
+
+                        });
+
+                })
+
+                .then(result => {
+
+                    if (!result.ok) {
+
+                        alert(
+                            result.data ||
+                            "Failed to add resident"
+                        );
+
+
+                        if (message) {
+
+                            message.innerText =
+                                "Failed to add resident";
+
+                        }
+
+                        return;
+                    }
+
+
+                    // Success - inline only
+
+                    if (message) {
+
+                        message.innerText =
+                            "Resident added successfully";
+
+                    }
+
+
+                    form.reset();
+
+
+                    loadResidents();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Resident Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to server"
+                    );
+
+
+                    if (message) {
+
+                        message.innerText =
+                            "Failed to add resident";
+
+                    }
+
+                });
+
+        }
+    );
 
 }
 
 
-// ==========================================
-// VISITOR
-// ==========================================
+// ======================================================
+// VISITOR - LOAD LIST
+// ======================================================
 
 function loadVisitors() {
+
+    const table =
+        document.getElementById("visitorTable");
+
+    if (!table) {
+        return;
+    }
+
 
     fetch("/api/visitor/getall")
 
         .then(response => {
 
             if (!response.ok) {
-                throw new Error("Visitor API failed");
+
+                throw new Error(
+                    "Visitor API failed"
+                );
+
             }
 
             return response.json();
@@ -368,23 +565,43 @@ function loadVisitors() {
 
         .then(data => {
 
-            const table =
-                document.getElementById("visitorTable");
+            console.log(
+                "Visitor data:",
+                data
+            );
 
-            if (!table) {
-                return;
-            }
 
             table.innerHTML = "";
+
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            No visitors found
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
 
 
             data.forEach(visitor => {
 
                 const id =
-                    visitor.Id ?? visitor.id ?? "";
+                    visitor.Id ??
+                    visitor.id ??
+                    "";
 
                 const name =
-                    visitor.Name ?? visitor.name ?? "";
+                    visitor.Name ??
+                    visitor.name ??
+                    "";
 
                 const phone =
                     visitor.phone ??
@@ -417,13 +634,21 @@ function loadVisitors() {
 
 
                 row.innerHTML = `
+
                     <td>${id}</td>
+
                     <td>${name}</td>
+
                     <td>${phone}</td>
+
                     <td>${visitDate}</td>
+
                     <td>${fromTime}</td>
+
                     <td>${toTime}</td>
+
                     <td>${flatId}</td>
+
                 `;
 
 
@@ -436,15 +661,27 @@ function loadVisitors() {
         .catch(error => {
 
             console.error(
-                "Load Visitor Error:",
+                "Visitor API Error:",
                 error
             );
 
-            alert("Unable to load visitors");
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        Unable to load visitors
+                    </td>
+                </tr>
+            `;
 
         });
+
 }
 
+
+// ======================================================
+// VISITOR - ADD
+// ======================================================
 
 function setupVisitorForm() {
 
@@ -456,151 +693,210 @@ function setupVisitorForm() {
     }
 
 
-    form.addEventListener("submit", function(event) {
+    form.addEventListener(
+        "submit",
+        function(event) {
 
-        event.preventDefault();
-
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const visitDate =
-            document.getElementById("visitDate").value;
-
-        const fromTime =
-            document.getElementById("fromTime").value;
-
-        const toTime =
-            document.getElementById("toTime").value;
-
-        const flatId =
-            Number(
-                document.getElementById("flatId").value
-            );
+            event.preventDefault();
 
 
-        const message =
-            document.getElementById("message");
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
 
 
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            alert(
-                "Please enter a valid 10 digit phone number"
-            );
-
-            return;
-        }
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
 
 
-        const visitor = {
-
-            Name: name,
-            phone: phone,
-            VisitDate: visitDate,
-            FromTime: fromTime,
-            ToTime: toTime,
-            FlatId: flatId
-
-        };
+            const visitDate =
+                document
+                    .getElementById("visitDate")
+                    .value;
 
 
-        if (message) {
-            message.innerText =
-                "Adding visitor...";
-        }
+            const fromTime =
+                document
+                    .getElementById("fromTime")
+                    .value;
 
 
-        fetch("/api/visitor/create", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(visitor)
-
-        })
-
-            .then(response => {
-
-                return response.text().then(data => ({
-
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-
-                }));
-
-            })
-
-            .then(result => {
-
-                if (!result.ok) {
-
-                    console.error(
-                        "Visitor API Error:",
-                        result.status,
-                        result.data
-                    );
-
-                    alert(
-                        result.data ||
-                        "Failed to add visitor"
-                    );
-
-                    if (message) {
-                        message.innerText =
-                            "Failed to add visitor";
-                    }
-
-                    return;
-                }
+            const toTime =
+                document
+                    .getElementById("toTime")
+                    .value;
 
 
-                // SUCCESS - NO ALERT
-
-                if (message) {
-                    message.innerText =
-                        "Visitor added successfully";
-                }
-
-
-                form.reset();
-
-
-                loadVisitors();
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Visitor Connection Error:",
-                    error
+            const flatId =
+                Number(
+                    document
+                        .getElementById("flatId")
+                        .value
                 );
 
-                alert("Unable to connect to server");
 
-                if (message) {
-                    message.innerText =
-                        "Failed to add visitor";
+            const message =
+                document.getElementById("message");
+
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+
+                alert(
+                    "Please enter a valid 10 digit phone number"
+                );
+
+                return;
+            }
+
+
+            if (fromTime >= toTime) {
+
+                alert(
+                    "To Time must be greater than From Time"
+                );
+
+                return;
+            }
+
+
+            const visitor = {
+
+                Name: name,
+
+                phone: phone,
+
+                VisitDate: visitDate,
+
+                FromTime: fromTime,
+
+                ToTime: toTime,
+
+                FlatId: flatId
+
+            };
+
+
+            if (message) {
+
+                message.innerText =
+                    "Adding visitor...";
+
+            }
+
+
+            fetch(
+                "/api/visitor/create",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(visitor)
+
                 }
+            )
 
-            });
+                .then(response => {
 
-    });
+                    return response.text()
+                        .then(data => {
+
+                            return {
+
+                                ok: response.ok,
+
+                                status:
+                                response.status,
+
+                                data: data
+
+                            };
+
+                        });
+
+                })
+
+                .then(result => {
+
+                    if (!result.ok) {
+
+                        alert(
+                            result.data ||
+                            "Failed to add visitor"
+                        );
+
+
+                        if (message) {
+
+                            message.innerText =
+                                "Failed to add visitor";
+
+                        }
+
+                        return;
+                    }
+
+
+                    // Success - inline only
+
+                    if (message) {
+
+                        message.innerText =
+                            "Visitor added successfully";
+
+                    }
+
+
+                    form.reset();
+
+
+                    loadVisitors();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Visitor Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to server"
+                    );
+
+
+                    if (message) {
+
+                        message.innerText =
+                            "Failed to add visitor";
+
+                    }
+
+                });
+
+        }
+    );
 
 }
 
 
-// ==========================================
+// ======================================================
 // GATE VERIFICATION
-// ==========================================
+// ======================================================
 
 function setupGateForm() {
 
@@ -612,121 +908,155 @@ function setupGateForm() {
     }
 
 
-    form.addEventListener("submit", function(event) {
+    form.addEventListener(
+        "submit",
+        function(event) {
 
-        event.preventDefault();
-
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const message =
-            document.getElementById("message");
+            event.preventDefault();
 
 
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            alert(
-                "Please enter a valid 10 digit phone number"
-            );
-
-            return;
-        }
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
 
 
-        if (message) {
-            message.innerText =
-                "Verifying visitor...";
-        }
+            const message =
+                document.getElementById("message");
 
 
-        fetch(
-            "/api/gate/verify?phone=" +
-            encodeURIComponent(phone),
-            {
-                method: "POST"
-            }
-        )
+            if (!/^[0-9]{10}$/.test(phone)) {
 
-            .then(response => {
-
-                return response.text().then(data => ({
-
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-
-                }));
-
-            })
-
-            .then(result => {
-
-                if (!result.ok) {
-
-                    console.error(
-                        "Gate API Error:",
-                        result.status,
-                        result.data
-                    );
-
-                    alert(
-                        result.data ||
-                        "Gate verification failed"
-                    );
-
-                    if (message) {
-                        message.innerText =
-                            "Gate verification failed";
-                    }
-
-                    return;
-                }
-
-
-                // SUCCESS - NO ALERT
-
-                if (message) {
-                    message.innerText =
-                        result.data ||
-                        "Visitor verified successfully";
-                }
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Gate Connection Error:",
-                    error
+                alert(
+                    "Please enter a valid 10 digit phone number"
                 );
 
-                alert("Unable to connect to server");
+                return;
+            }
 
-                if (message) {
-                    message.innerText =
-                        "Verification failed";
+
+            if (message) {
+
+                message.innerText =
+                    "Verifying visitor...";
+
+            }
+
+
+            fetch(
+                "/api/gate/verify?phone=" +
+                encodeURIComponent(phone),
+                {
+                    method: "POST"
                 }
+            )
 
-            });
+                .then(response => {
 
-    });
+                    return response.text()
+                        .then(data => {
+
+                            return {
+
+                                ok: response.ok,
+
+                                status:
+                                response.status,
+
+                                data: data
+
+                            };
+
+                        });
+
+                })
+
+                .then(result => {
+
+                    if (!result.ok) {
+
+                        alert(
+                            result.data ||
+                            "Gate verification failed"
+                        );
+
+
+                        if (message) {
+
+                            message.innerText =
+                                "Gate verification failed";
+
+                        }
+
+                        return;
+                    }
+
+
+                    // Success - inline only
+
+                    if (message) {
+
+                        message.innerText =
+                            result.data ||
+                            "Visitor verified successfully";
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Gate Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to server"
+                    );
+
+
+                    if (message) {
+
+                        message.innerText =
+                            "Verification failed";
+
+                    }
+
+                });
+
+        }
+    );
 
 }
 
 
-// ==========================================
-// ENTRY / EXIT
-// ==========================================
+// ======================================================
+// ENTRY LIST
+// ======================================================
 
 function loadEntries() {
+
+    const table =
+        document.getElementById("entryTable");
+
+    if (!table) {
+        return;
+    }
+
 
     fetch("/api/entry/getall")
 
         .then(response => {
 
             if (!response.ok) {
-                throw new Error("Entry API failed");
+
+                throw new Error(
+                    "Entry API failed"
+                );
+
             }
 
             return response.json();
@@ -735,32 +1065,49 @@ function loadEntries() {
 
         .then(data => {
 
-            const table =
-                document.getElementById("entryTable");
+            table.innerHTML = "";
 
-            if (!table) {
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            No entry records found
+                        </td>
+                    </tr>
+                `;
+
                 return;
             }
-
-            table.innerHTML = "";
 
 
             data.forEach(entry => {
 
                 const id =
-                    entry.Id ?? entry.id ?? "";
+                    entry.Id ??
+                    entry.id ??
+                    "";
 
                 const phone =
-                    entry.phone ?? "";
+                    entry.phone ??
+                    entry.Phone ??
+                    "";
 
                 const entryTime =
-                    entry.entryTime ?? "";
+                    entry.entryTime ??
+                    "";
 
                 const exitTime =
-                    entry.exitTime ?? "-";
+                    entry.exitTime ??
+                    "-";
 
                 const status =
-                    entry.status ?? "";
+                    entry.status ??
+                    "";
 
 
                 const row =
@@ -768,11 +1115,17 @@ function loadEntries() {
 
 
                 row.innerHTML = `
+
                     <td>${id}</td>
+
                     <td>${phone}</td>
+
                     <td>${entryTime}</td>
+
                     <td>${exitTime}</td>
+
                     <td>${status}</td>
+
                 `;
 
 
@@ -785,15 +1138,27 @@ function loadEntries() {
         .catch(error => {
 
             console.error(
-                "Load Entry Error:",
+                "Entry API Error:",
                 error
             );
 
-            alert("Unable to load entry records");
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        Unable to load entry records
+                    </td>
+                </tr>
+            `;
 
         });
+
 }
 
+
+// ======================================================
+// RECORD EXIT
+// ======================================================
 
 function setupExitForm() {
 
@@ -805,127 +1170,161 @@ function setupExitForm() {
     }
 
 
-    form.addEventListener("submit", function(event) {
+    form.addEventListener(
+        "submit",
+        function(event) {
 
-        event.preventDefault();
-
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const message =
-            document.getElementById("message");
+            event.preventDefault();
 
 
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            alert(
-                "Please enter a valid 10 digit phone number"
-            );
-
-            return;
-        }
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
 
 
-        if (message) {
-            message.innerText =
-                "Recording visitor exit...";
-        }
+            const message =
+                document.getElementById("message");
 
 
-        fetch(
-            "/api/entry/exit?phone=" +
-            encodeURIComponent(phone),
-            {
-                method: "POST"
-            }
-        )
+            if (!/^[0-9]{10}$/.test(phone)) {
 
-            .then(response => {
-
-                return response.text().then(data => ({
-
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-
-                }));
-
-            })
-
-            .then(result => {
-
-                if (!result.ok) {
-
-                    console.error(
-                        "Exit API Error:",
-                        result.status,
-                        result.data
-                    );
-
-                    alert(
-                        result.data ||
-                        "Exit failed"
-                    );
-
-                    if (message) {
-                        message.innerText =
-                            "Exit failed";
-                    }
-
-                    return;
-                }
-
-
-                // SUCCESS - NO ALERT
-
-                if (message) {
-                    message.innerText =
-                        result.data ||
-                        "Visitor exit recorded successfully";
-                }
-
-
-                document.getElementById("phone").value = "";
-
-
-                loadEntries();
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Exit Connection Error:",
-                    error
+                alert(
+                    "Please enter a valid 10 digit phone number"
                 );
 
-                alert("Unable to connect to server");
+                return;
+            }
 
-                if (message) {
-                    message.innerText =
-                        "Exit failed";
+
+            if (message) {
+
+                message.innerText =
+                    "Recording visitor exit...";
+
+            }
+
+
+            fetch(
+                "/api/entry/exit?phone=" +
+                encodeURIComponent(phone),
+                {
+                    method: "POST"
                 }
+            )
 
-            });
+                .then(response => {
 
-    });
+                    return response.text()
+                        .then(data => {
+
+                            return {
+
+                                ok: response.ok,
+
+                                status:
+                                response.status,
+
+                                data: data
+
+                            };
+
+                        });
+
+                })
+
+                .then(result => {
+
+                    if (!result.ok) {
+
+                        alert(
+                            result.data ||
+                            "Exit failed"
+                        );
+
+
+                        if (message) {
+
+                            message.innerText =
+                                "Exit failed";
+
+                        }
+
+                        return;
+                    }
+
+
+                    // Success - inline only
+
+                    if (message) {
+
+                        message.innerText =
+                            result.data ||
+                            "Visitor exit recorded successfully";
+
+                    }
+
+
+                    form.reset();
+
+
+                    loadEntries();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Exit Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to server"
+                    );
+
+
+                    if (message) {
+
+                        message.innerText =
+                            "Exit failed";
+
+                    }
+
+                });
+
+        }
+    );
 
 }
 
 
-// ==========================================
-// SECURITY GUARDS
-// ==========================================
+// ======================================================
+// SECURITY GUARD - LOAD
+// ======================================================
 
 function loadGuards() {
+
+    const table =
+        document.getElementById("guardTable");
+
+    if (!table) {
+        return;
+    }
+
 
     fetch("/api/guard/getall")
 
         .then(response => {
 
             if (!response.ok) {
-                throw new Error("Guard API failed");
+
+                throw new Error(
+                    "Guard API failed"
+                );
+
             }
 
             return response.json();
@@ -934,14 +1333,24 @@ function loadGuards() {
 
         .then(data => {
 
-            const table =
-                document.getElementById("guardTable");
+            table.innerHTML = "";
 
-            if (!table) {
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            No security guards found
+                        </td>
+                    </tr>
+                `;
+
                 return;
             }
-
-            table.innerHTML = "";
 
 
             data.forEach(guard => {
@@ -982,19 +1391,30 @@ function loadGuards() {
 
 
                 row.innerHTML = `
+
                     <td>${id}</td>
+
                     <td>${name}</td>
+
                     <td>${phone}</td>
+
                     <td>${email}</td>
+
                     <td>${address}</td>
+
                     <td>${shift}</td>
+
                     <td>
+
                         <button
                             type="button"
-                            onclick="deleteGuard(${id})">
+                            onclick="deleteGuard(${id})"
+                        >
                             Delete
                         </button>
+
                     </td>
+
                 `;
 
 
@@ -1007,15 +1427,27 @@ function loadGuards() {
         .catch(error => {
 
             console.error(
-                "Load Guard Error:",
+                "Guard API Error:",
                 error
             );
 
-            alert("Unable to load security guards");
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        Unable to load security guards
+                    </td>
+                </tr>
+            `;
 
         });
+
 }
 
+
+// ======================================================
+// SECURITY GUARD - ADD
+// ======================================================
 
 function setupGuardForm() {
 
@@ -1027,178 +1459,226 @@ function setupGuardForm() {
     }
 
 
-    form.addEventListener("submit", function(event) {
+    form.addEventListener(
+        "submit",
+        function(event) {
 
-        event.preventDefault();
-
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const address =
-            document.getElementById("address").value.trim();
-
-        const shift =
-            document.getElementById("shift").value.trim();
+            event.preventDefault();
 
 
-        const message =
-            document.getElementById("message");
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
 
 
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            alert(
-                "Please enter a valid 10 digit phone number"
-            );
-
-            return;
-        }
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
 
 
-        const guard = {
-
-            Name: name,
-            Phone: phone,
-            Email: email,
-            Address: address,
-            Shift: shift
-
-        };
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
 
-        if (message) {
-            message.innerText =
-                "Adding security guard...";
-        }
+            const address =
+                document
+                    .getElementById("address")
+                    .value
+                    .trim();
 
 
-        fetch("/api/guard/create", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(guard)
-
-        })
-
-            .then(response => {
-
-                return response.text().then(data => ({
-
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-
-                }));
-
-            })
-
-            .then(result => {
-
-                if (!result.ok) {
-
-                    console.error(
-                        "Guard API Error:",
-                        result.status,
-                        result.data
-                    );
-
-                    alert(
-                        result.data ||
-                        "Failed to add security guard"
-                    );
-
-                    if (message) {
-                        message.innerText =
-                            "Failed to add security guard";
-                    }
-
-                    return;
-                }
+            const shift =
+                document
+                    .getElementById("shift")
+                    .value
+                    .trim();
 
 
-                // ==================================
-                // SUCCESS
-                // NO ALERT HERE
-                // ==================================
-
-                if (message) {
-                    message.innerText =
-                        "Security guard added successfully";
-                }
+            const message =
+                document.getElementById("message");
 
 
-                form.reset();
+            if (!/^[0-9]{10}$/.test(phone)) {
 
-
-                loadGuards();
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Guard Connection Error:",
-                    error
+                alert(
+                    "Please enter a valid 10 digit phone number"
                 );
 
-                alert("Unable to connect to server");
+                return;
+            }
 
-                if (message) {
-                    message.innerText =
-                        "Failed to add security guard";
+
+            const guard = {
+
+                Name: name,
+
+                Phone: phone,
+
+                Email: email,
+
+                Address: address,
+
+                Shift: shift
+
+            };
+
+
+            if (message) {
+
+                message.innerText =
+                    "Adding security guard...";
+
+            }
+
+
+            fetch(
+                "/api/guard/create",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(guard)
+
                 }
+            )
 
-            });
+                .then(response => {
 
-    });
+                    return response.text()
+                        .then(data => {
+
+                            return {
+
+                                ok: response.ok,
+
+                                status:
+                                response.status,
+
+                                data: data
+
+                            };
+
+                        });
+
+                })
+
+                .then(result => {
+
+                    if (!result.ok) {
+
+                        alert(
+                            result.data ||
+                            "Failed to add security guard"
+                        );
+
+
+                        if (message) {
+
+                            message.innerText =
+                                "Failed to add security guard";
+
+                        }
+
+                        return;
+                    }
+
+
+                    // Success - inline only
+
+                    if (message) {
+
+                        message.innerText =
+                            "Security guard added successfully";
+
+                    }
+
+
+                    form.reset();
+
+
+                    loadGuards();
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Guard Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to server"
+                    );
+
+
+                    if (message) {
+
+                        message.innerText =
+                            "Failed to add security guard";
+
+                    }
+
+                });
+
+        }
+    );
 
 }
 
 
-// ==========================================
+// ======================================================
 // DELETE GUARD
-// ==========================================
+// ======================================================
 
 function deleteGuard(id) {
 
-    fetch("/api/guard/delete/" + id, {
-
-        method: "DELETE"
-
-    })
+    fetch(
+        "/api/guard/delete/" + id,
+        {
+            method: "DELETE"
+        }
+    )
 
         .then(response => {
 
-            return response.text().then(data => ({
+            return response.text()
+                .then(data => {
 
-                ok: response.ok,
-                status: response.status,
-                data: data
+                    return {
 
-            }));
+                        ok: response.ok,
+
+                        status:
+                        response.status,
+
+                        data: data
+
+                    };
+
+                });
 
         })
 
         .then(result => {
 
             if (!result.ok) {
-
-                console.error(
-                    "Delete Guard Error:",
-                    result.status,
-                    result.data
-                );
 
                 alert(
                     result.data ||
@@ -1214,8 +1694,10 @@ function deleteGuard(id) {
 
 
             if (message) {
+
                 message.innerText =
                     "Security guard deleted successfully";
+
             }
 
 
@@ -1226,91 +1708,147 @@ function deleteGuard(id) {
         .catch(error => {
 
             console.error(
-                "Delete Guard Connection Error:",
+                "Delete Guard Error:",
                 error
             );
 
-            alert("Unable to connect to server");
+
+            alert(
+                "Unable to connect to server"
+            );
 
         });
 
 }
 
 
-// ==========================================
+// ======================================================
 // PAGE INITIALIZATION
-// ==========================================
+// ======================================================
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
 
-    // Dashboard
+        // -----------------------------
+        // Dashboard
+        // -----------------------------
 
-    if (document.getElementById("residentCount")) {
-        loadDashboard();
+        if (
+            document.getElementById(
+                "residentCount"
+            )
+        ) {
+
+            loadDashboard();
+
+        }
+
+
+        // -----------------------------
+        // Residents
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "residentTable"
+            )
+        ) {
+
+            loadResidents();
+
+            setupResidentForm();
+
+        }
+
+
+        // -----------------------------
+        // Visitors
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "visitorTable"
+            )
+        ) {
+
+            loadVisitors();
+
+            setupVisitorForm();
+
+        }
+
+
+        // -----------------------------
+        // Gate
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "gateForm"
+            )
+        ) {
+
+            setupGateForm();
+
+        }
+
+
+        // -----------------------------
+        // Entry
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "entryTable"
+            )
+        ) {
+
+            loadEntries();
+
+        }
+
+
+        // -----------------------------
+        // Exit
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "exitForm"
+            )
+        ) {
+
+            setupExitForm();
+
+        }
+
+
+        // -----------------------------
+        // Guards
+        // -----------------------------
+
+        if (
+            document.getElementById(
+                "guardTable"
+            )
+        ) {
+
+            loadGuards();
+
+        }
+
+
+        if (
+            document.getElementById(
+                "guardForm"
+            )
+        ) {
+
+            setupGuardForm();
+
+        }
+
     }
-
-
-    // Residents
-
-    if (document.getElementById("residentTable")) {
-
-        loadResidents();
-
-        setupResidentForm();
-
-    }
-
-
-    // Visitors
-
-    if (document.getElementById("visitorTable")) {
-
-        loadVisitors();
-
-        setupVisitorForm();
-
-    }
-
-
-    // Gate
-
-    if (document.getElementById("gateForm")) {
-
-        setupGateForm();
-
-    }
-
-
-    // Entry / Exit
-
-    if (document.getElementById("entryTable")) {
-
-        loadEntries();
-
-    }
-
-
-    if (document.getElementById("exitForm")) {
-
-        setupExitForm();
-
-    }
-
-
-    // Guards
-
-    if (document.getElementById("guardTable")) {
-
-        loadGuards();
-
-    }
-
-
-    if (document.getElementById("guardForm")) {
-
-        setupGuardForm();
-
-    }
-
-});
+);

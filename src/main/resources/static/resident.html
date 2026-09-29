@@ -44,6 +44,10 @@
         Visitors
     </a>
 
+    <a href="/gate.html">
+        Gate Verification
+    </a>
+
     <a href="/entry.html">
         Entry / Exit
     </a>
@@ -56,6 +60,9 @@
 
 
 <main class="container">
+
+
+    <!-- RESIDENT MANAGEMENT -->
 
     <div class="card">
 
@@ -70,69 +77,120 @@
     </div>
 
 
+    <!-- ADD RESIDENT -->
+
     <div class="card">
 
         <h2>
             Add Resident
         </h2>
 
+
         <form id="residentForm">
 
-            <label>Name</label>
 
-            <input
-                    type="text"
-                    id="name"
-                    required
-            >
+            <div class="form-grid">
 
 
-            <label>Phone</label>
+                <div class="form-group">
 
-            <input
-                    type="text"
-                    id="phone"
-                    required
-            >
+                    <label for="name">
+                        Name
+                    </label>
 
+                    <input
+                            type="text"
+                            id="name"
+                            placeholder="Enter resident name"
+                            required
+                    >
 
-            <label>Email</label>
-
-            <input
-                    type="email"
-                    id="email"
-                    required
-            >
+                </div>
 
 
-            <label>Address</label>
+                <div class="form-group">
 
-            <input
-                    type="text"
-                    id="address"
-                    required
-            >
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <input
+                            type="text"
+                            id="phone"
+                            placeholder="Enter 10 digit phone"
+                            maxlength="10"
+                            required
+                    >
+
+                </div>
 
 
-            <label>Flat ID</label>
+                <div class="form-group">
 
-            <input
-                    type="number"
-                    id="flatId"
-                    required
-            >
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter email"
+                            required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="address">
+                        Address
+                    </label>
+
+                    <input
+                            type="text"
+                            id="address"
+                            placeholder="Enter address"
+                            required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="flatId">
+                        Flat ID
+                    </label>
+
+                    <input
+                            type="number"
+                            id="flatId"
+                            placeholder="Enter flat ID"
+                            required
+                    >
+
+                </div>
+
+
+            </div>
 
 
             <button type="submit">
                 Add Resident
             </button>
 
+
         </form>
+
 
         <p id="message"></p>
 
+
     </div>
 
+
+    <!-- RESIDENT LIST -->
 
     <div class="card">
 
@@ -140,78 +198,53 @@
             Resident List
         </h2>
 
-        <table>
 
-            <thead>
+        <div class="table-wrapper">
 
-            <tr>
+            <table>
 
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Flat ID</th>
+                <thead>
 
-            </tr>
+                <tr>
 
-            </thead>
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Phone</th>
+
+                    <th>Email</th>
+
+                    <th>Address</th>
+
+                    <th>Flat ID</th>
+
+                </tr>
+
+                </thead>
 
 
-            <tbody id="residentTable">
+                <tbody id="residentTable">
 
-            </tbody>
+                </tbody>
 
-        </table>
+
+            </table>
+
+        </div>
+
 
     </div>
+
 
 </main>
 
 
-<script>
+<!-- ONLY ONE SCRIPT -->
 
-    function loadResidents() {
+<script src="/js/script.js"></script>
 
-        fetch("/api/resident/getall")
 
-            .then(response => response.json())
+</body>
 
-            .then(data => {
-
-                let table =
-                    document.getElementById("residentTable");
-
-                table.innerHTML = "";
-
-                data.forEach(resident => {
-
-                    let row =
-                        document.createElement("tr");
-
-                    row.innerHTML = `
-
-                        <td>${resident.id}</td>
-
-                        <td>${resident.name}</td>
-
-                        <td>${resident.phone}</td>
-
-                        <td>${resident.email}</td>
-
-                        <td>${resident.address}</td>
-
-                        <td>${resident.flatId}</td>
-
-                    `;
-
-                    table.appendChild(row);
-
-                });
-
-            })
-
-            .catch(error => {
-
-                console.error(
-                    "Resident API Error:",
+</html>
