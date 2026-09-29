@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>VisitorPass - Entry Exit</title>
+    <title>VisitorPass - Entry / Exit</title>
 
     <link rel="stylesheet"
           href="/css/style.css">
@@ -16,7 +16,6 @@
 </head>
 
 <body>
-
 
 <header class="header">
 
@@ -33,23 +32,48 @@
 
 <nav class="navbar">
 
-    <a href="/index.html">Dashboard</a>
+    <a href="/index.html">
+        Dashboard
+    </a>
 
-    <a href="/resident.html">Residents</a>
+    <a href="/resident.html">
+        Residents
+    </a>
 
-    <a href="/visitor.html">Visitors</a>
+    <a href="/visitor.html">
+        Visitors
+    </a>
 
-    <a href="/gate.html">Gate Verification</a>
+    <a href="/entry.html">
+        Entry / Exit
+    </a>
 
-    <a href="/entry.html">Entry / Exit</a>
-
-    <a href="/guard.html">Security Guards</a>
+    <a href="/guard.html">
+        Security Guards
+    </a>
 
 </nav>
 
 
 <main class="container">
 
+
+    <!-- PAGE TITLE -->
+
+    <div class="card">
+
+        <h2>
+            Entry / Exit Management
+        </h2>
+
+        <p>
+            Record visitor exit and view entry records
+        </p>
+
+    </div>
+
+
+    <!-- EXIT FORM -->
 
     <div class="card">
 
@@ -60,67 +84,68 @@
 
         <form id="exitForm">
 
-            <div class="form-grid">
 
-                <input
-                        type="text"
-                        id="exitPhone"
-                        placeholder="Enter visitor phone number"
-                        required>
+            <label>
+                Visitor Phone Number
+            </label>
 
 
-                <button
-                        type="submit">
+            <input
+                    type="text"
+                    id="phone"
+                    placeholder="Enter visitor phone number"
+                    required
+            >
 
-                    Record Exit
 
-                </button>
+            <button type="submit">
+                Record Exit
+            </button>
 
-            </div>
 
         </form>
+
+
+        <p id="message"></p>
 
     </div>
 
 
+    <!-- ENTRY TABLE -->
 
     <div class="card">
 
         <h2>
-            Entry / Exit History
+            Entry / Exit Records
         </h2>
 
 
-        <div class="table-wrapper">
+        <table>
 
-            <table>
+            <thead>
 
-                <thead>
+            <tr>
 
-                <tr>
+                <th>ID</th>
 
-                    <th>ID</th>
+                <th>Phone</th>
 
-                    <th>Phone</th>
+                <th>Entry Time</th>
 
-                    <th>Entry Time</th>
+                <th>Exit Time</th>
 
-                    <th>Exit Time</th>
+                <th>Status</th>
 
-                    <th>Status</th>
+            </tr>
 
-                </tr>
-
-                </thead>
+            </thead>
 
 
-                <tbody id="entryTableBody">
+            <tbody id="entryTable">
 
-                </tbody>
+            </tbody>
 
-            </table>
-
-        </div>
+        </table>
 
     </div>
 
@@ -128,7 +153,201 @@
 </main>
 
 
-<script src="/js/script.js"></script>
+<script>
+
+
+    /* =========================================
+       LOAD ENTRY / EXIT RECORDS
+       ========================================= */
+
+    function loadEntries() {
+
+
+        fetch("/api/entry/getall")
+
+
+            .then(response => {
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Entry API failed"
+                    );
+
+                }
+
+
+                return response.json();
+
+            })
+
+
+            .then(data => {
+
+
+                let table =
+                    document.getElementById(
+                        "entryTable"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                data.forEach(entry => {
+
+
+                    let row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                    <td>
+                        ${entry.id}
+                    </td>
+
+                    <td>
+                        ${entry.phone}
+                    </td>
+
+                    <td>
+                        ${entry.entryTime}
+                    </td>
+
+                    <td>
+                        ${entry.exitTime || "-"}
+                    </td>
+
+                    <td>
+                        ${entry.status}
+                    </td>
+
+                `;
+
+
+                    table.appendChild(row);
+
+
+                });
+
+
+            })
+
+
+            .catch(error => {
+
+
+                console.error(
+                    "Entry API Error:",
+                    error
+                );
+
+
+            });
+
+    }
+
+
+    /* =========================================
+       RECORD EXIT
+       ========================================= */
+
+    document
+        .getElementById("exitForm")
+        .addEventListener(
+            "submit",
+            function(event) {
+
+
+                event.preventDefault();
+
+
+                let phone =
+                    document.getElementById(
+                        "phone"
+                    ).value.trim();
+
+
+                if (phone === "") {
+
+                    document.getElementById(
+                        "message"
+                    ).innerText =
+                        "Please enter phone number";
+
+                    return;
+
+                }
+
+
+                fetch(
+                    "/api/entry/exit?phone="
+                    + encodeURIComponent(phone),
+                    {
+
+                        method: "POST"
+
+                    }
+                )
+
+
+                    .then(response => {
+
+
+                        return response.text();
+
+                    })
+
+
+                    .then(data => {
+
+
+                        document.getElementById(
+                            "message"
+                        ).innerText = data;
+
+
+                        document.getElementById(
+                            "exitForm"
+                        ).reset();
+
+
+                        loadEntries();
+
+
+                    })
+
+
+                    .catch(error => {
+
+
+                        document.getElementById(
+                            "message"
+                        ).innerText =
+                            "Error connecting to server";
+
+
+                        console.error(error);
+
+
+                    });
+
+
+            }
+        );
+
+
+    /* =========================================
+       LOAD DATA WHEN PAGE OPENS
+       ========================================= */
+
+    loadEntries();
+
+
+</script>
+
 
 </body>
 

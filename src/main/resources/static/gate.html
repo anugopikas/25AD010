@@ -1,62 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VisitorPass - Gate Verification</title>
+
+    <link rel="stylesheet"
+          href="/css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="logo">
+        VisitorPass
+    </div>
+
+    <div class="subtitle">
+        Visitor Management
+    </div>
+
+</header>
+
+
+<!-- NAVIGATION -->
+
+<nav class="navbar">
+
+    <a href="/index.html">
+        Dashboard
+    </a>
+
+    <a href="/resident.html">
+        Residents
+    </a>
+
+    <a href="/visitor.html">
+        Visitors
+    </a>
+
+    <a href="/gate.html">
+        Gate Verification
+    </a>
+
+    <a href="/entry.html">
+        Entry / Exit
+    </a>
+
+    <a href="/guard.html">
+        Security Guards
+    </a>
+
+</nav>
+
+
+<!-- MAIN -->
+
+<main class="container">
+
+
+    <!-- GATE VERIFICATION -->
+
+    <div class="card">
+
+        <h2>
+            Gate Verification
+        </h2>
+
+        <form id="gateForm">
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Visitor Phone Number
+                    </label>
+
+                    <input
+                            type="text"
+                            id="phone"
+                            placeholder="Visitor Phone Number"
+                            maxlength="10"
+                            required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <button type="submit">
+                Verify Visitor
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- VERIFICATION RESULT -->
+
+    <div class="card">
+
+        <h2>
+            Verification Result
+        </h2>
+
+        <p id="message">
+            Enter visitor phone number and verify.
+        </p>
+
+    </div>
+
+
+</main>
+
+
 <script>
 
-    document.getElementById("gateForm").addEventListener("submit", async function(event) {
 
-        event.preventDefault();
+    document
+        .getElementById("gateForm")
+        .addEventListener(
+            "submit",
+            function(event) {
 
-        const phone = document.getElementById("gatePhone").value.trim();
-        const result = document.getElementById("gateResult");
 
-        console.log("Phone entered:", phone);
+                event.preventDefault();
 
-        if (phone === "") {
-            result.style.display = "block";
-            result.innerText = "Please enter phone number";
-            return;
-        }
 
-        result.style.display = "block";
-        result.innerText = "Verifying...";
+                let phone =
+                    document
+                        .getElementById("phone")
+                        .value
+                        .trim();
 
-        try {
 
-            const response = await fetch(
-                "http://localhost:8081/api/gate/verify?phone=" +
-                encodeURIComponent(phone),
-                {
-                    method: "POST"
+                let message =
+                    document.getElementById(
+                        "message"
+                    );
+
+
+                /* VALIDATE PHONE */
+
+                if (phone === "") {
+
+                    message.innerText =
+                        "Please enter visitor phone number";
+
+                    return;
+
                 }
-            );
 
-            console.log("HTTP Status:", response.status);
 
-            const message = await response.text();
+                if (!/^[0-9]{10}$/.test(phone)) {
 
-            console.log("Backend Response:", message);
+                    message.innerText =
+                        "Please enter a valid 10 digit phone number";
 
-            result.style.display = "block";
-            result.innerText = message;
+                    return;
 
-            if (message.includes("Entry Allowed")) {
-                result.style.background = "#d1fae5";
-                result.style.color = "#065f46";
-            } else {
-                result.style.background = "#fee2e2";
-                result.style.color = "#991b1b";
+                }
+
+
+                message.innerText =
+                    "Verifying visitor...";
+
+
+                /* GATE API */
+
+                fetch(
+                    "/api/gate/verify?phone="
+                    + encodeURIComponent(phone),
+                    {
+
+                        method: "POST"
+
+                    }
+                )
+
+
+                    .then(response => {
+
+                        return response.text();
+
+                    })
+
+
+                    .then(data => {
+
+                        message.innerText =
+                            data;
+
+                    })
+
+
+                    .catch(error => {
+
+                        console.error(
+                            "Gate Verification Error:",
+                            error
+                        );
+
+
+                        message.innerText =
+                            "Unable to connect to server";
+
+                    });
+
             }
+        );
 
-        } catch (error) {
-
-            console.error("ERROR:", error);
-
-            result.style.display = "block";
-            result.innerText =
-                "Cannot connect to backend: " + error.message;
-
-            result.style.background = "#fee2e2";
-            result.style.color = "#991b1b";
-        }
-
-    });
 
 </script>
+
+
+</body>
+
+</html>

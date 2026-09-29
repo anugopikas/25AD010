@@ -17,7 +17,6 @@
 
 <body>
 
-
 <header class="header">
 
     <div class="logo">
@@ -25,7 +24,7 @@
     </div>
 
     <div class="subtitle">
-        Visitor Pre-Approval
+        Visitor Entry / Exit Management
     </div>
 
 </header>
@@ -33,145 +32,239 @@
 
 <nav class="navbar">
 
-    <a href="/index.html">Dashboard</a>
+    <a href="/index.html">
+        Dashboard
+    </a>
 
-    <a href="/resident.html">Residents</a>
+    <a href="/resident.html">
+        Residents
+    </a>
 
-    <a href="/visitor.html">Visitors</a>
+    <a href="/visitor.html">
+        Visitors
+    </a>
 
-    <a href="/gate.html">Gate Verification</a>
+    <a href="/entry.html">
+        Entry / Exit
+    </a>
 
-    <a href="/entry.html">Entry / Exit</a>
-
-    <a href="/guard.html">Security Guards</a>
+    <a href="/guard.html">
+        Security Guards
+    </a>
 
 </nav>
 
 
 <main class="container">
 
+    <div class="card">
+
+        <h2>
+            Visitor Management
+        </h2>
+
+        <p>
+            Create and view visitor pre-approvals
+        </p>
+
+    </div>
+
 
     <div class="card">
 
         <h2>
-            Pre-Approve Visitor
+            Add Visitor
         </h2>
-
 
         <form id="visitorForm">
 
-            <div class="form-grid">
+            <label>Visitor Name</label>
+
+            <input
+                    type="text"
+                    id="name"
+                    required
+            >
 
 
-                <input
-                        type="text"
-                        id="visitorName"
-                        placeholder="Visitor Name"
-                        required>
+            <label>Phone</label>
+
+            <input
+                    type="text"
+                    id="phone"
+                    required
+            >
 
 
-                <input
-                        type="text"
-                        id="visitorPhone"
-                        placeholder="Phone Number"
-                        required>
+            <label>Visit Date</label>
+
+            <input
+                    type="date"
+                    id="visitDate"
+                    required
+            >
 
 
-                <input
-                        type="date"
-                        id="visitDate"
-                        required>
+            <label>From Time</label>
+
+            <input
+                    type="time"
+                    id="fromTime"
+                    required
+            >
 
 
-                <input
-                        type="time"
-                        id="fromTime"
-                        required>
+            <label>To Time</label>
+
+            <input
+                    type="time"
+                    id="toTime"
+                    required
+            >
 
 
-                <input
-                        type="time"
-                        id="toTime"
-                        required>
+            <label>Flat ID</label>
+
+            <input
+                    type="number"
+                    id="flatId"
+                    required
+            >
 
 
-                <input
-                        type="number"
-                        id="flatId"
-                        placeholder="Flat ID"
-                        required>
-
-
-            </div>
-
-
-            <br>
-
-
-            <button
-                    type="submit"
-                    class="full-button">
-
-                Approve Visitor
-
+            <button type="submit">
+                Add Visitor
             </button>
 
         </form>
 
-    </div>
+        <p id="message"></p>
 
+    </div>
 
 
     <div class="card">
 
         <h2>
-            Approved Visitors
+            Visitor List
         </h2>
 
+        <table>
 
-        <div class="table-wrapper">
+            <thead>
 
-            <table>
+            <tr>
 
-                <thead>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Visit Date</th>
+                <th>From Time</th>
+                <th>To Time</th>
+                <th>Flat ID</th>
 
-                <tr>
+            </tr>
 
-                    <th>ID</th>
-
-                    <th>Name</th>
-
-                    <th>Phone</th>
-
-                    <th>Date</th>
-
-                    <th>From</th>
-
-                    <th>To</th>
-
-                    <th>Flat ID</th>
-
-                </tr>
-
-                </thead>
+            </thead>
 
 
-                <tbody id="visitorTableBody">
+            <tbody id="visitorTable">
 
-                </tbody>
+            </tbody>
 
-            </table>
-
-        </div>
+        </table>
 
     </div>
-
 
 </main>
 
 
-<script src="/js/script.js"></script>
+<script>
 
-</body>
+    function loadVisitors() {
 
-</html>
+        fetch("/api/visitor/getall")
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                let table =
+                    document.getElementById("visitorTable");
+
+                table.innerHTML = "";
+
+                data.forEach(visitor => {
+
+                    let row =
+                        document.createElement("tr");
+
+                    row.innerHTML = `
+
+                        <td>${visitor.id}</td>
+
+                        <td>${visitor.name}</td>
+
+                        <td>${visitor.phone}</td>
+
+                        <td>${visitor.visitDate}</td>
+
+                        <td>${visitor.fromTime}</td>
+
+                        <td>${visitor.toTime}</td>
+
+                        <td>${visitor.flatId}</td>
+
+                    `;
+
+                    table.appendChild(row);
+
+                });
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Visitor API Error:",
+                    error
+                );
+
+            });
+
+    }
+
+
+    document
+        .getElementById("visitorForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+
+            let visitor = {
+
+                name:
+                document.getElementById("name").value,
+
+                phone:
+                document.getElementById("phone").value,
+
+                visitDate:
+                document.getElementById("visitDate").value,
+
+                fromTime:
+                document.getElementById("fromTime").value,
+
+                toTime:
+                document.getElementById("toTime").value,
+
+                flatId:
+                    Number(
+                        document.getElementById("flatId").value
+                    )
+
+            };
+
+
+            fetch("/api/visitor/create
